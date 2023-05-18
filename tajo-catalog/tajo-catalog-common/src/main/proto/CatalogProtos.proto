@@ -1,0 +1,417 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+option java_package = "org.apache.tajo.catalog.proto";
+option java_outer_classname = "CatalogProtos";
+option optimize_for = SPEED;
+option java_generic_services = false;
+option java_generate_equals_and_hash = true;
+
+import "DataTypes.proto";
+import "PrimitiveProtos.proto";
+
+enum OrderType {
+  ORDER_NONE = 0;
+  ASC = 1;
+  DSC = 2;
+}
+
+enum PartitionType {
+  RANGE = 0;
+  HASH = 1;
+  LIST = 2;
+  COLUMN = 3;
+}
+
+enum AlterTableType {
+  RENAME_TABLE = 0;
+  RENAME_COLUMN = 1;
+  ADD_COLUMN = 2;
+  ADD_PARTITION = 3;
+  DROP_PARTITION = 4;
+  SET_PROPERTY = 5;
+  UNSET_PROPERTY = 6;
+}
+
+message ColumnProto {
+  required string name = 1;
+  optional int32 tid = 2;
+  required TypeProto type = 3;
+}
+
+message SchemaProto {
+  repeated ColumnProto fields = 1;
+}
+
+message FragmentProto {
+  required string id = 1;
+  required string kind = 2;
+  required bytes contents = 3;
+}
+
+message TableProto {
+  required string data_format = 1;
+  optional KeyValueSetProto params = 2;
+}
+
+message CreateTablespaceRequest {
+  required string tablespace_name = 1;
+  required string tablespace_uri = 2;
+}
+
+message CreateDatabaseRequest {
+  required string database_name = 1;
+  optional string tablespace_name = 2;
+}
+
+message TableDescProto {
+  required string table_name = 2;
+  optional string path = 3;
+  required TableProto meta = 4;
+  optional SchemaProto schema = 5;
+  optional TableStatsProto stats = 6;
+  optional PartitionMethodProto partition = 7;
+  optional bool is_external = 8 [default = false];
+}
+
+message TableIdentifierProto {
+  required string database_name = 1;
+  required string table_name = 2;
+  optional int32 db_id = 3;
+  optional int32 tid = 4;
+}
+
+message NamespaceProto {
+  required string database_name = 1;
+  optional string namespace = 2;
+}
+
+message IndexDescProto {
+  required TableIdentifierProto table_identifier = 1;
+  required string index_name = 2;
+  required IndexMethod index_method = 3;
+  required string index_path = 4;
+  repeated SortSpecProto key_sort_specs = 5;
+  required SchemaProto target_relation_schema = 6;
+  optional bool is_unique = 7 [default = false];
+  optional bool is_clustered = 8 [default = false];
+}
+
+enum IndexMethod {
+  TWO_LEVEL_BIN_TREE = 0;
+  BTREE_IDX = 1;
+  HASH_IDX = 2;
+  BITMAP_IDX = 3;
+}
+
+message IndexNameProto {
+  required string database_name = 1;
+  optional string namespace = 2;
+  required string index_name = 3;
+}
+
+message TableOptionProto {
+  required int32 tid = 1;
+  required KeyValueProto keyval = 2;
+}
+
+message TablePartitionProto {
+  required int32 partition_id = 1;
+  required int32 tid = 2;
+  optional string partition_name = 3;
+  optional string path = 4;
+}
+
+message GetFunctionsResponse {
+  required ReturnState state = 1;
+  repeated FunctionDescProto function_desc = 2;
+}
+
+message UnregisterFunctionRequest {
+  required string signature = 1;
+}
+
+message GetFunctionMetaRequest {
+  required string signature = 1;
+  optional FunctionType function_type = 2;
+  repeated DataType parameter_types = 3;
+}
+
+message ContainFunctionRequest {
+  required string signature = 1;
+  optional FunctionType function_type = 2;
+  repeated DataType parameter_types = 3;
+}
+
+message TableStatsProto {
+  required int64 num_rows = 1;
+  required int64 num_bytes = 2;
+  optional int32 num_blocks = 4;
+  optional int32 num_shuffle_outputs = 5;
+  optional int64 avg_rows = 6;
+  optional int64 read_bytes = 7;
+  repeated ColumnStatsProto col_stat = 8;
+  optional int32 tid = 9;
+}
+
+message ColumnStatsProto {
+  required ColumnProto column = 1;
+  optional int64 num_dist_val = 2;
+  optional int64 num_nulls = 3;
+  optional bytes min_value = 4;
+  optional bytes max_value = 5;
+}
+
+enum StatType {
+  TABLE_NUM_ROWS = 0;
+  TABLE_NUM_BLOCKS = 1;
+  TABLE_NUM_PARTITIONS = 2;
+  TABLE_AVG_ROWS = 3;
+  TABLE_NUM_BYTES = 4;
+
+  COLUMN_NUM_NDV = 5;
+  COLUMN_NUM_NULLS = 6;
+}
+
+message StatSetProto {
+  repeated StatProto stats = 1;
+}
+
+message StatProto {
+  required StatType type = 1;
+  required int64 value = 2;
+}
+
+message ServerNameProto {
+  required string server_name = 1;
+  required string host_name = 2;
+  required int32 port = 3;
+}
+
+message TupleComparatorSpecProto {
+  required int32 column_id = 1;
+  optional bool ascending = 2 [default = true];
+  optional bool null_first = 3 [default = false];
+}
+
+message SortSpecProto {
+  required ColumnProto column = 1;
+  optional bool ascending = 2 [default = true];
+  optional bool null_first = 3 [default = false];
+}
+
+message PartitionMethodProto {
+  required TableIdentifierProto table_identifier = 1;
+  required PartitionType partition_type = 2;
+  required string expression = 3;
+  required SchemaProto expression_schema = 4;
+}
+
+message AddPartitionsProto {
+  required TableIdentifierProto table_identifier = 1;
+  repeated PartitionDescProto partition_desc = 2;
+  required bool if_not_exists = 3;
+}
+
+message PartitionDescProto {
+  required string partition_name = 1;
+  repeated PartitionKeyProto partition_keys = 2;
+  optional string path = 3;
+  optional int32 id = 4;
+  optional int64 num_bytes = 5;
+}
+
+message PartitionKeyProto {
+  required string column_name = 1;
+  required string partition_value = 2;
+}
+
+message PartitionIdentifierProto {
+  required string database_name = 1;
+  required string table_name = 2;
+  optional string partition_name = 3;
+}
+
+message PartitionsByAlgebraProto {
+  required string database_name = 1;
+  required string table_name = 2;
+  // JSON object which contains algebra expressions.
+  required string algebra = 3;
+}
+
+message PartitionsByFilterProto {
+  required string database_name = 1;
+  required string table_name = 2;
+  // Filter string: (col1 ='1' or col1 = '100') and col3 > 20
+  required string filter = 3;
+}
+
+message TablespaceProto {
+  required string space_name = 1;
+  required string uri = 2;
+  optional string handler = 3;
+  optional int32 id = 4;
+}
+
+message DatabaseProto {
+   required int32 space_id = 1;
+   required int32 id = 2;
+   required string name = 3;
+}
+
+message TableDescriptorProto {
+	required int32 db_id = 1;
+	required int32 tid = 2;
+	required string name = 3;
+	optional string table_type = 4;
+	required string path = 5;
+	required string data_format = 6;
+}
+
+message AlterTablespaceProto {
+  required string space_name = 1;
+  repeated AlterTablespaceCommand command = 2;
+
+  enum AlterTablespaceType {
+    LOCATION = 0;
+  }
+
+  message AlterTablespaceCommand {
+    required AlterTablespaceType type = 1;
+    optional string location = 2;
+  }
+}
+
+message AlterTableDescProto {
+  required string table_name = 1;
+  optional string new_table_name = 2 ;
+  optional ColumnProto add_column = 3;
+  optional AlterColumnProto alter_column_name = 4;
+  required AlterTableType alter_table_type = 5;
+  optional PartitionDescProto partition_desc = 6;
+  optional KeyValueSetProto params = 7;
+  optional string new_table_path = 8;
+  optional StringListProto unset_property_keys = 9;
+}
+
+message AlterColumnProto {
+  required string old_column_name = 1;
+  required string new_column_name = 2;
+}
+
+message UpdateTableStatsProto {
+  required string table_name = 1;
+  required TableStatsProto stats = 2;
+}
+
+////////////////////////////////////////////////
+// Function and UDF Section
+////////////////////////////////////////////////
+
+enum FunctionType {
+  GENERAL = 0;
+  AGGREGATION = 1;
+  DISTINCT_AGGREGATION = 2;
+  WINDOW = 3;
+  UDF = 4;
+  UDA = 5;
+  DISTINCT_UDA = 6;
+  WINDOW_UDA = 7;
+}
+
+message FunctionDescProto {
+  required FunctionSignatureProto signature = 1;
+  required FunctionSupplementProto supplement = 2;
+  required FunctionInvocationProto invocation = 3;
+}
+
+message FunctionSignatureProto {
+  required FunctionType type = 1;
+  required string name = 2;
+  required DataType return_type = 3;
+  repeated DataType parameter_types = 4;
+  optional bool deterministic = 5;
+}
+
+message FunctionSupplementProto {
+  optional string short_description = 1;
+  optional string detail = 2;
+  optional string example = 3;
+}
+
+message FunctionInvocationProto {
+  optional ClassBaseInvocationDescProto legacy = 1;
+  optional StaticMethodInvocationDescProto scalar = 2;
+  optional ClassBaseInvocationDescProto aggregation = 3;
+  optional StaticMethodInvocationDescProto scalar_jit = 4;
+  optional ClassBaseInvocationDescProto aggregation_jit = 5;
+  optional UDFinvocationDescProto udf_invocation = 6;
+}
+
+message ClassBaseInvocationDescProto {
+  required string class_name = 1;
+}
+
+message StaticMethodInvocationDescProto {
+  required string class_name = 1;
+  required string method_name = 2;
+  required string return_class = 3;
+  repeated string param_classes = 4;
+}
+
+enum UDFtype {
+  PYTHON = 0;
+  HIVE = 1;
+}
+
+message UDFinvocationDescProto {
+  required UDFtype type = 1;
+  required string func_name = 2;
+  required bool is_scalar_function = 3;
+  optional string file_path = 4;
+}
+
+message TableResponse {
+  required ReturnState state = 1;
+  optional TableDescProto table = 2;
+}
+
+message FunctionResponse {
+  required ReturnState state = 1;
+  optional FunctionDescProto function = 2;
+}
+
+message FunctionListResponse {
+  required ReturnState state = 1;
+  repeated FunctionDescProto function = 2;
+}
+
+message IndexListResponse {
+  required ReturnState state = 1;
+  repeated IndexDescProto index_desc = 2;
+}
+
+message IndexResponse {
+  required ReturnState state = 1;
+  optional IndexDescProto index_desc = 2;
+}
+
+message PartitionListResponse {
+  required ReturnState state = 1;
+  repeated PartitionDescProto partition = 2;
+}

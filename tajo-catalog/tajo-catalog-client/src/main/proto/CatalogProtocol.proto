@@ -1,0 +1,151 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+option java_package = "org.apache.tajo.catalog";
+option java_outer_classname = "CatalogProtocol";
+option java_generic_services = true;
+option java_generate_equals_and_hash = true;
+
+import "CatalogProtos.proto";
+import "PrimitiveProtos.proto";
+
+message GetTablespaceListResponse {
+  required ReturnState state = 1;
+  repeated TablespaceProto tablespace = 2;
+}
+
+message GetTablespaceResponse {
+  required ReturnState state = 1;
+  optional TablespaceProto tablespace = 2;
+}
+
+message GetDatabasesResponse {
+  required ReturnState state = 1;
+  repeated DatabaseProto database = 2;
+}
+
+message GetTablesResponse {
+  required ReturnState state = 1;
+  repeated TableDescriptorProto table = 2;
+}
+
+message GetTablePropertiesResponse {
+  required ReturnState state = 1;
+  repeated TableOptionProto properties = 2;
+}
+
+message GetTableStatsResponse {
+  required ReturnState state = 1;
+  repeated TableStatsProto stats = 2;
+}
+
+message GetColumnsResponse {
+  required ReturnState state = 1;
+  repeated ColumnProto column = 2;
+}
+
+message GetPartitionMethodResponse {
+  required ReturnState state = 1;
+  optional PartitionMethodProto partition = 2;
+}
+
+message GetPartitionDescResponse {
+  required ReturnState state = 1;
+  optional PartitionDescProto partition = 2;
+}
+
+message GetIndexeDescResponse {
+  required ReturnState state = 1;
+  optional IndexDescProto index = 2;
+}
+
+message GetIndexByColumnNamesRequest {
+  required TableIdentifierProto table_identifier = 1;
+  repeated string column_names = 2;
+}
+
+message GetPartitionsResponse {
+  required ReturnState state = 1;
+  repeated PartitionDescProto partition = 2;
+}
+
+message GetTablePartitionsResponse {
+  required ReturnState state = 1;
+  repeated TablePartitionProto part = 2;
+}
+
+service CatalogProtocolService {
+
+  rpc createTablespace(CreateTablespaceRequest) returns (ReturnState);
+  rpc dropTablespace(StringProto) returns (ReturnState);
+  rpc existTablespace(StringProto) returns (ReturnState);
+  rpc getAllTablespaces(NullProto) returns (GetTablespaceListResponse);
+  rpc getAllTablespaceNames(NullProto) returns (StringListResponse);
+  rpc getTablespace(StringProto) returns (GetTablespaceResponse);
+  rpc alterTablespace(AlterTablespaceProto) returns (ReturnState);
+  rpc alterTable(AlterTableDescProto) returns (ReturnState);
+  rpc updateTableStats(UpdateTableStatsProto) returns (ReturnState);
+
+  rpc createDatabase(CreateDatabaseRequest) returns (ReturnState);
+  rpc dropDatabase(StringProto) returns (ReturnState);
+  rpc existDatabase(StringProto) returns (ReturnState);
+  rpc getAllDatabaseNames(NullProto) returns (StringListResponse);
+  rpc getAllDatabases(NullProto) returns (GetDatabasesResponse);
+
+  rpc createTable(TableDescProto) returns (ReturnState);
+  rpc dropTable(TableIdentifierProto) returns (ReturnState);
+  rpc existsTable(TableIdentifierProto) returns (ReturnState);
+  rpc getTableDesc(TableIdentifierProto) returns (TableResponse);
+  rpc getAllTableNames(StringProto) returns (StringListResponse);
+  rpc getAllTables(NullProto) returns (GetTablesResponse);
+  rpc getAllTableProperties(NullProto) returns (GetTablePropertiesResponse);
+  rpc getAllTableStats(NullProto) returns (GetTableStatsResponse);
+  rpc getAllColumns(NullProto) returns (GetColumnsResponse);
+
+  rpc getPartitionMethodByTableName(TableIdentifierProto)
+      returns (GetPartitionMethodResponse);
+  rpc existPartitionMethod(TableIdentifierProto) returns (ReturnState);
+
+  rpc existsPartitions(TableIdentifierProto) returns (ReturnState);
+  rpc getPartitionByPartitionName(PartitionIdentifierProto)
+      returns (GetPartitionDescResponse);
+  rpc getPartitionsByTableName(TableIdentifierProto)
+      returns (GetPartitionsResponse);
+  rpc getAllPartitions(NullProto) returns (GetTablePartitionsResponse);
+  rpc addPartitions(AddPartitionsProto) returns (ReturnState);
+  rpc getPartitionsByAlgebra(PartitionsByAlgebraProto)
+      returns (GetPartitionsResponse);
+
+  rpc createIndex(IndexDescProto) returns (ReturnState);
+  rpc dropIndex(IndexNameProto) returns (ReturnState);
+  rpc existIndexByName(IndexNameProto) returns (ReturnState);
+  rpc existIndexByColumnNames(GetIndexByColumnNamesRequest)
+      returns (ReturnState);
+  rpc existIndexesByTable(TableIdentifierProto) returns (ReturnState);
+  rpc getIndexByName(IndexNameProto) returns (IndexResponse);
+  rpc getIndexByColumnNames(GetIndexByColumnNamesRequest)
+      returns (IndexResponse);
+  rpc getAllIndexesByTable(TableIdentifierProto) returns (IndexListResponse);
+  rpc getAllIndexes(NullProto) returns (IndexListResponse);
+
+  rpc createFunction(FunctionDescProto) returns (ReturnState);
+  rpc dropFunction(UnregisterFunctionRequest) returns (ReturnState);
+  rpc getFunctions(NullProto) returns (GetFunctionsResponse);
+  rpc getFunctionMeta(GetFunctionMetaRequest) returns (FunctionResponse);
+  rpc containFunction(ContainFunctionRequest) returns (ReturnState);
+}

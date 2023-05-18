@@ -1,0 +1,71 @@
+Build instructions for Tajo
+
+--------------------------------------------------------------------------------
+Requirements:
+
+* Unix System
+* JDK 1.8 or higher
+* Maven 3.0 or higher
+* Internet connection for first build (to fetch all Maven and Tajo dependencies)
+
+--------------------------------------------------------------------------------
+Maven main modules:
+
+  tajo                            (Main Tajo project)
+         - tajo-project           (Parent POM for all Tajo Maven modules. )
+                                  (All plugins & dependencies versions are defined here.)
+         - tajo-algebra           (Algebraic expressions)
+         - tajo-catalog           (Catalog and its plugins)
+         - tajo-common            (Common modules)
+         - tajo-core              (Core module)
+         - tajo-core-tests        (Tests for core module and query execution)
+         - tajo-client            (Client API and its implementation)
+         - tajo-client-example    (Client API examples)
+         - tajo-dist              (Tajo distribution assembler)
+         - tajo-docs              (User documentation)
+         - tajo-jdbc              (Tajo JDBC Driver)
+         - tajo-maven-plugin      (Maven Plugin)
+         - tajo-metrics           (Metrics)
+         - tajo-plan              (Plan representation)
+         - tajo-pullserver        (Pullserver for intermediate)
+         - tajo-rpc               (Rpc)
+         - tajo-sql-parser        (SQL parser)
+         - tajo-storage           (Storage and its plugins)
+
+--------------------------------------------------------------------------------
+Maven build goals:
+
+ * Clean                     : mvn clean
+ * Compile                   : mvn compile
+ * Run tests                 : mvn test
+ * Run integrating tests     : mvn verify
+ * Create JAR                : mvn package
+ * Run findbugs              : mvn compile findbugs:findbugs
+ * Install JAR in M2 cache   : mvn install
+ * Build distribution        : mvn package [-Pdist][-Dtar]
+
+ Build options:
+  * Use -Dtar to create a TAR with the distribution (using -Pdist)
+  * Use -Dhadoop.version to build with the specific hadoop version (-Dhadoop.version=2.7.1)
+    * Currently, 2.3.0 or higher are supported.
+  * Use -Dhbase.version to build with the specific hbase version (-Dhbase.version=0.98.7-hadoop2)
+    * Currently, 0.98.x-hadoop2 or higher are tested.
+
+ Tests options:
+  * Use -DskipTests to skip tests when running the following Maven goals:
+    'package',  'install', 'deploy' or 'verify'
+  * -Dtest=<TESTCLASSNAME>,<TESTCLASSNAME#METHODNAME>,....
+  * -Dtest.exclude=<TESTCLASSNAME>
+  * -Dtest.exclude.pattern=**/<TESTCLASSNAME1>.java,**/<TESTCLASSNAME2>.java
+  * For more information, refer to https://cwiki.apache.org/confluence/display/TAJO/Unit+Tests.
+
+--------------------------------------------------------------------------------
+Building distributions:
+
+Create binary distribution
+
+  $ mvn clean install -Pdist -DskipTests -Dtar -Dhadoop.version=2.X.X
+
+You should substitute 2.X.X with your Hadoop version.
+
+--------------------------------------------------------------------------------
