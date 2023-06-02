@@ -5,17 +5,18 @@ import org.apache.tajo.client.SessionConnection;
 import org.apache.tajo.exception.DuplicateDatabaseException;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
+
 
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+/** Those tests are first test made only to play a little bit with mockito and jUnit */
+
+
 public class firstTest {
 
     private static final String MOCKITO_LABEL = "Mockito test, let's get it !";
@@ -33,7 +34,7 @@ public class firstTest {
         when(catalogAdminClient.existDatabase(dbName)).thenReturn(true);
     }
 
-    @Test
+    @Test @Ignore
     public void testOne(){
         Assert.assertTrue(true);
     }
