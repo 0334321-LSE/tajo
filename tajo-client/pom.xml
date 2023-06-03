@@ -197,11 +197,11 @@
       <artifactId>tajo-rpc-protobuf</artifactId>
     </dependency>
 
-    <dependency>
+<!--    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
-    </dependency>
+    </dependency>-->
 
     <dependency>
       <groupId>org.mockito</groupId>

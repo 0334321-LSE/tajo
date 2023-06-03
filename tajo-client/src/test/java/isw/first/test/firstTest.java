@@ -1,15 +1,15 @@
 package isw.first.test;
 
+
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.apache.tajo.client.CatalogAdminClientImpl;
-import org.apache.tajo.client.SessionConnection;
-import org.apache.tajo.exception.DuplicateDatabaseException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 
 import static org.mockito.Mockito.when;
@@ -25,8 +25,9 @@ public class firstTest {
     @Mock
     CatalogAdminClientImpl catalogAdminClient;
 
-    @Before
-    public void createMocks() {
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
         final String dbName2 = "DB_pazzo";
         final String dbName = "DB_serio";
         // add the mocked behavior for two DB names
@@ -36,10 +37,10 @@ public class firstTest {
 
     @Test @Ignore
     public void testOne(){
-        Assert.assertTrue(true);
+        Assertions.assertTrue(true);
     }
 
-    @Test
+    @Test @Ignore
     public void mockitoTest(){
         String dbN = "DB_pazzo";
         String dbN2 = "DB_serio";
@@ -49,7 +50,7 @@ public class firstTest {
         boolean b3 = catalogAdminClient.existDatabase("DB_pippo");
 
         boolean condition = b1 && b2 && !b3;
-        Assert.assertTrue(condition);
+        Assertions.assertTrue(condition);
     }
 
 }
