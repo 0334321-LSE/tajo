@@ -75,6 +75,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <tajo.root>${basedir}</tajo.root>
+    <jupiter.version>5.8.0</jupiter.version>
   </properties>
 
   <modules>
@@ -177,16 +178,15 @@
             <dependency>
               <groupId>org.junit.jupiter</groupId>
               <artifactId>junit-jupiter-api</artifactId>
-              <version>5.8.0</version>
-              <scope>test</scope>
+              <version>${jupiter.version}</version>
+
             </dependency>
 
             <!-- Dipendenza per l'esecuzione dei test di JUnit 5 -->
             <dependency>
               <groupId>org.junit.jupiter</groupId>
               <artifactId>junit-jupiter-engine</artifactId>
-              <version>5.8.0</version>
-              <scope>test</scope>
+              <version>${jupiter.version}</version>
             </dependency>
             <dependency>
               <groupId>org.mockito</groupId>
