@@ -3,6 +3,7 @@ package org.apache.tajo.client;
 import org.apache.tajo.QueryTestCaseBase;
 import org.apache.tajo.TajoTestingCluster;
 import org.apache.tajo.TpchTestBase;
+
 import org.apache.tajo.exception.CannotDropCurrentDatabaseException;
 import org.apache.tajo.exception.DuplicateDatabaseException;
 import org.apache.tajo.exception.InsufficientPrivilegeException;
@@ -13,17 +14,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import org.apache.tools.ant.taskdefs.condition.Xor;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import static org.mockito.Mockito.*;
 
 public class CatalogAdminClientTest extends QueryTestCaseBase {
     //Pattern for db name, now we accept also - _ as special character
@@ -166,7 +165,7 @@ public class CatalogAdminClientTest extends QueryTestCaseBase {
     public CatalogAdminClientTest(){
         MockitoAnnotations.initMocks(this);
         // Mocked catalog admin client
-        this.mockedCatalogAdminClient = mock(CatalogAdminClient.class);
+        this.mockedCatalogAdminClient = Mockito.mock(CatalogAdminClient.class);
         this.databaseList = new ArrayList<>();
     }
 
@@ -182,7 +181,7 @@ public class CatalogAdminClientTest extends QueryTestCaseBase {
     public void configureMocks() throws DuplicateDatabaseException, UndefinedDatabaseException, InsufficientPrivilegeException, CannotDropCurrentDatabaseException {
 
         // Mocked CreateDatabase, it does 3 check before the creation
-        doAnswer(invocation -> {
+        Mockito.doAnswer(invocation -> {
             String dbName = invocation.getArguments()[0].toString();
 
            //1)  Check if the dbName string is empty or null
@@ -202,11 +201,11 @@ public class CatalogAdminClientTest extends QueryTestCaseBase {
                 this.databaseList.add(dbName);
 
             return null;
-        }).when(mockedCatalogAdminClient).createDatabase(anyString());
+        }).when(mockedCatalogAdminClient).createDatabase(Matchers.anyString());
 
         /* Mocked existDatabase, it only checks if there is a database with the same name
          of the input argument */
-        doAnswer(invocation -> {
+        Mockito.doAnswer(invocation -> {
             String dbName = invocation.getArguments()[0].toString();
 
             //1)  Check if the dbName string is empty or null
@@ -218,10 +217,10 @@ public class CatalogAdminClientTest extends QueryTestCaseBase {
                 return true;
             else
                 return false;
-        }).when(mockedCatalogAdminClient).existDatabase(anyString());
+        }).when(mockedCatalogAdminClient).existDatabase(Matchers.anyString());
 
         // Mocked dropDatabase, it does 3 check before the creation
-        doAnswer(invocation -> {
+        Mockito.doAnswer(invocation -> {
             String dbName = invocation.getArguments()[0].toString();
 
             //1)  Check if the dbName string is empty or null
@@ -241,7 +240,7 @@ public class CatalogAdminClientTest extends QueryTestCaseBase {
                 this.databaseList.remove(dbName);
 
             return null;
-        }).when(mockedCatalogAdminClient).dropDatabase(anyString());
+        }).when(mockedCatalogAdminClient).dropDatabase(Matchers.anyString());
     }
 
 

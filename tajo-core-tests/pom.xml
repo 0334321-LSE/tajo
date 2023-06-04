@@ -73,7 +73,8 @@
           <systemProperties>
             <tajo.test.enabled>true</tajo.test.enabled>
           </systemProperties>
-          <argLine>-Xms128m -Xmx1000m -XX:+CMSClassUnloadingEnabled -Dfile.encoding=UTF-8 -Dderby.storage.pageSize=1024 -Dderby.stream.error.file=/dev/null</argLine>
+          <argLine>${argLine} -Xms128m -Xmx1000m -XX:+CMSClassUnloadingEnabled -Dfile.encoding=UTF-8 -Dderby.storage.pageSize=1024 -Dderby.stream.error.file=/dev/null --add-opens java.base/sun.misc=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+          </argLine>
         </configuration>
       </plugin>
       <plugin>
@@ -343,15 +344,16 @@
       <version>${jupiter.version}</version>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-module-junit4</artifactId>
@@ -385,6 +387,26 @@
       <build>
         <plugins>
           <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco-maven-plugin.version}</version>
+            <executions>
+              <execution>
+                <id>prepare-agent</id>
+                <goals>
+                  <goal>prepare-agent</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>report</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>report</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
             <executions>
@@ -399,7 +421,7 @@
               <forkCount>${maven.fork.count}</forkCount>
               <reuseForks>true</reuseForks>
               <trimStackTrace>false</trimStackTrace>
-              <argLine>-Xms128m -Xmx800m -XX:MinMetaspaceFreeRatio=10 -XX:MaxMetaspaceFreeRatio=10 -XX:+CMSClassUnloadingEnabled -Dfile.encoding=UTF-8 -Dderby.storage.pageSize=1024 -Dderby.stream.error.file=/dev/null</argLine>
+              <argLine>${argLine} -Xms128m -Xmx800m -XX:MinMetaspaceFreeRatio=10 -XX:MaxMetaspaceFreeRatio=10 -XX:+CMSClassUnloadingEnabled -Dfile.encoding=UTF-8 -Dderby.storage.pageSize=1024 -Dderby.stream.error.file=/dev/null</argLine>
               <useSystemClassLoader>true</useSystemClassLoader>
               <useManifestOnlyJar>true</useManifestOnlyJar>
               <systemProperties>
