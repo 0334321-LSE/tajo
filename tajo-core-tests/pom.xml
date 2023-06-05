@@ -422,10 +422,10 @@
               </execution>
             </executions>
             <configuration combine.self="override">
-              <forkCount>${maven.fork.count}</forkCount>
+              <forkCount>3</forkCount>
               <reuseForks>true</reuseForks>
               <trimStackTrace>false</trimStackTrace>
-              <argLine>${argLine} -Xms128m -Xmx800m -XX:MinMetaspaceFreeRatio=10 -XX:MaxMetaspaceFreeRatio=10 -XX:+CMSClassUnloadingEnabled -Dfile.encoding=UTF-8 -Dderby.storage.pageSize=1024 -Dderby.stream.error.file=/dev/null</argLine>
+              <argLine>${argLine} -Xmx1024m -XX:MaxPermSize=256m -Xms128m -Xmx800m -XX:MinMetaspaceFreeRatio=10 -XX:MaxMetaspaceFreeRatio=10 -XX:+CMSClassUnloadingEnabled -Dfile.encoding=UTF-8 -Dderby.storage.pageSize=1024 -Dderby.stream.error.file=/dev/null</argLine>
               <useSystemClassLoader>true</useSystemClassLoader>
               <useManifestOnlyJar>true</useManifestOnlyJar>
               <systemProperties>
