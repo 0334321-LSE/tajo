@@ -1,9 +1,9 @@
 package org.apache.tajo.client;
 
 import org.apache.tajo.QueryTestCaseBase;
+
 import org.apache.tajo.TajoTestingCluster;
 import org.apache.tajo.TpchTestBase;
-
 import org.apache.tajo.exception.CannotDropCurrentDatabaseException;
 import org.apache.tajo.exception.DuplicateDatabaseException;
 import org.apache.tajo.exception.InsufficientPrivilegeException;
@@ -19,12 +19,11 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+
 import org.mockito.Matchers;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
-
-public class CatalogAdminClientTest extends QueryTestCaseBase {
+public class CatalogAdminClientTest {
     //Pattern for db name, now we accept also - _ as special character
     private final String regexPattern = "[^a-zA-Z0-9-_]";
     private final Pattern pattern = Pattern.compile(this.regexPattern);
@@ -36,85 +35,8 @@ public class CatalogAdminClientTest extends QueryTestCaseBase {
     private static TajoTestingCluster cluster;
     private static TajoClient client;
 
-/*    public static Collection<Object[]> getParameters() {
-        return Arrays.asList(new Object[][] {
-                // Test some flow of executions, unidimensional selection:
-                // at least  1 test case for each boundary value
-                //CREATE DB
-                // createDB_1   createDB_2  existDB_1   dropDB_2    exist_result    exception
-            *//*0*//*{ "db1",        "db2",      "db1",      "db2",      true,          false},
-            *//*1*//*{ "db1",        "db1",      "db1",      "db2",      true,          false}
-
-
-        });
-    }*/
-
-    static class ParameterSet {
-        private  String existingDB;
-        private  String createDB;
-        private  String existDB;
-        private  String dropDB;
-        private  boolean existResult;
-        private final boolean expectedException;
-
-        private String exceptionClass;
-
-        // Parameters for createDatabase
-        public ParameterSet(String existingDB, String createDB, boolean expectedException, String exceptionClass) {
-            this.existingDB = existingDB;
-            this.createDB = createDB;
-            this.expectedException = expectedException;
-            this.exceptionClass = exceptionClass;
-        }
-
-        // Parameters for existsDatabase
-        public ParameterSet(String existingDB, String existDB, boolean existResult, boolean expectedException, String exceptionClass) {
-            this.existingDB = existingDB;
-            this.existDB = existDB;
-            this.existResult = existResult;
-            this.expectedException = expectedException;
-            this.exceptionClass = exceptionClass;
-        }
-
-        // Parameter for dropDatabase
-        public ParameterSet(String existingDB, String createDB,String dropDB, boolean expectedException, String exceptionClass) {
-            this.existingDB = existingDB;
-            this.createDB = createDB;
-            this.dropDB = dropDB;
-            this.expectedException = expectedException;
-            this.exceptionClass = exceptionClass;
-        }
-
-        public String getExistingDB() {
-            return existingDB;
-        }
-
-        public String getCreateDB() {
-            return createDB;
-        }
-
-        public String getExceptionClass() {
-            return exceptionClass;
-        }
-
-        public String getExistDB() {
-            return existDB;
-        }
-
-        public String getDropDB() {
-            return dropDB;
-        }
-
-        public boolean isExistResult() {
-            return existResult;
-        }
-
-        public boolean isExpectedException() {
-            return expectedException;
-        }
-    }
-
     static Stream<ParameterSet> createDatabaseParameters(){
+
         //Unidimensional selection for createDatabase boundary values
         return Stream.of(
                 //valid db name
@@ -162,8 +84,8 @@ public class CatalogAdminClientTest extends QueryTestCaseBase {
     }
 
 
+
     public CatalogAdminClientTest(){
-        MockitoAnnotations.initMocks(this);
         // Mocked catalog admin client
         this.mockedCatalogAdminClient = Mockito.mock(CatalogAdminClient.class);
         this.databaseList = new ArrayList<>();
@@ -247,7 +169,6 @@ public class CatalogAdminClientTest extends QueryTestCaseBase {
     @ParameterizedTest
     @MethodSource("createDatabaseParameters")
     public void createDatabaseTest(ParameterSet parameterSet){
-
         boolean isExceptionThrownOne;
         boolean isExceptionThrownTwo;
         Exception e1 = null, e2 = null;
@@ -258,7 +179,7 @@ public class CatalogAdminClientTest extends QueryTestCaseBase {
             this.mockedCatalogAdminClient.createDatabase(parameterSet.getCreateDB());
             //if expectedException was false, test is gone correctly
             isExceptionThrownOne = false;
-            Assertions.assertFalse(parameterSet.expectedException);
+            Assertions.assertFalse(parameterSet.isExpectedException());
         }
         catch (Exception actualE1){
             isExceptionThrownOne = true;
@@ -280,7 +201,7 @@ public class CatalogAdminClientTest extends QueryTestCaseBase {
 
             isExceptionThrownTwo = false;
             //if expectedException was false, test is gone correctly
-            Assertions.assertFalse(parameterSet.expectedException);
+            Assertions.assertFalse(parameterSet.isExpectedException());
         }
         catch (Exception actualE2){
             isExceptionThrownTwo = true;
@@ -301,8 +222,9 @@ public class CatalogAdminClientTest extends QueryTestCaseBase {
     }
 
     @AfterAll
-    public static void tearDown() throws Exception {
-        client.close();
+    public static void tearDown() {
+        if(client!= null)
+         client.close();
     }
 
 }

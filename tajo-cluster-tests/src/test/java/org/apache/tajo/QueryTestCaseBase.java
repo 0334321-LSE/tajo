@@ -185,7 +185,6 @@ public class QueryTestCaseBase {
     optimizer = engine.getLogicalOptimizer();
     postVerifier = engine.getLogicalPlanVerifier();
   }
-
   /** It transiently contains created tables for the running test class. */
   private static String currentDatabase;
   private static Set<String> createdTableGlobalSet = new HashSet<>();

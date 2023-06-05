@@ -1,7 +1,5 @@
 package isw.first.test;
 
-
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.apache.tajo.client.CatalogAdminClientImpl;
 
 import org.junit.jupiter.api.Assertions;
@@ -35,12 +33,12 @@ public class firstTest {
         when(catalogAdminClient.existDatabase(dbName)).thenReturn(true);
     }
 
-    @Test @Ignore
+    @Test
     public void testOne(){
         Assertions.assertTrue(true);
     }
 
-    @Test @Ignore
+    @Test
     public void mockitoTest(){
         String dbN = "DB_pazzo";
         String dbN2 = "DB_serio";
