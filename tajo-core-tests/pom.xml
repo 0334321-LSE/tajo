@@ -79,7 +79,9 @@
           <systemProperties>
             <tajo.test.enabled>true</tajo.test.enabled>
           </systemProperties>
-          <argLine>@{argLine} --add-opens java.base/sun.misc=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED</argLine>
+<!--
+          <argLine>&#45;&#45;add-opens java.base/sun.misc=ALL-UNNAMED &#45;&#45;add-opens java.base/sun.nio.ch=ALL-UNNAMED</argLine>
+-->
         </configuration>
       </plugin>
       <plugin>
