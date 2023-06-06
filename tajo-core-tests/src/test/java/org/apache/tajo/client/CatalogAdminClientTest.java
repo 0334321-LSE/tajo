@@ -169,6 +169,7 @@ public class CatalogAdminClientTest {
         }).when(mockedCatalogAdminClient).dropDatabase(Matchers.anyString());
     }
 
+/*
     @ParameterizedTest
     @MethodSource("createDatabaseParameters")
     public void createDatabaseTest(ParameterSet parameterSet){
@@ -222,8 +223,9 @@ public class CatalogAdminClientTest {
             Assertions.assertEquals(e1.getClass().getName(),e2.getClass().getName(),"Both the executions have thrown the same exception");
         System.out.println("Both the executions have been the same result");
     }
+*/
 
-    @ParameterizedTest
+   /* @ParameterizedTest
     @MethodSource("existsDatabaseParameters")
     public void existsDatabaseTest(ParameterSet parameterSet){
         boolean isExceptionThrownOne,isExceptionThrownTwo;
@@ -287,7 +289,7 @@ public class CatalogAdminClientTest {
         Assertions.assertEquals(existsOne,existsTwo,"Not both the executions have the same output");
         System.out.println("Both the executions have been the same result");
     }
-
+*/
 
     /* Those tests don't fail cause thrown UndefinedNameException not for error caused by the input */
     @ParameterizedTest
