@@ -1,4 +1,4 @@
-package org.apache.tajo.client;
+package org.apache.tajo.client.catalogAdminClient;
 /*
         Licensed to the Apache Software Foundation (ASF) under one
         or more contributor license agreements.  See the NOTICE file
@@ -18,11 +18,12 @@ package org.apache.tajo.client;
         */
 import org.apache.tajo.TajoTestingCluster;
 import org.apache.tajo.TpchTestBase;
+import org.apache.tajo.client.CatalogAdminClient;
+import org.apache.tajo.client.TajoClient;
 import org.apache.tajo.exception.CannotDropCurrentDatabaseException;
 import org.apache.tajo.exception.DuplicateDatabaseException;
 import org.apache.tajo.exception.InsufficientPrivilegeException;
 import org.apache.tajo.exception.UndefinedDatabaseException;
-import org.junit.Ignore;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -47,58 +48,58 @@ public class CatalogAdminClientTest {
     private static TajoTestingCluster cluster;
     private TajoClient client;
 
-    static Stream<ParameterSet> createDatabaseParameters(){
+    static Stream<CatalogParameterSet> createDatabaseParameters(){
 
         //Unidimensional selection for createDatabase boundary values
         return Stream.of(
                 //valid db name
-                new ParameterSet("db1","db2",false, null),
+                new CatalogParameterSet("db1","db2",false, null),
                 //case sensitive
-                new ParameterSet("db1","DB2",false, null),
+                new CatalogParameterSet("db1","DB2",false, null),
                 //not valid db name (already exists)
-                new ParameterSet("db1","db1",true, DuplicateDatabaseException.class.getName()),
+                new CatalogParameterSet("db1","db1",true, DuplicateDatabaseException.class.getName()),
                 //empty db name
-                new ParameterSet("db1","",true, Exception.class.getName()),
+                new CatalogParameterSet("db1","",true, Exception.class.getName()),
                 //null db name
-                new ParameterSet("db1",null,true, Exception.class.getName()),
+                new CatalogParameterSet("db1",null,true, Exception.class.getName()),
                 //special char
-                new ParameterSet("db1","*$p&cialDB!*",true, Exception.class.getName())
+                new CatalogParameterSet("db1","*$p&cialDB!*",true, Exception.class.getName())
         );
     }
 
-    static Stream<ParameterSet> existsDatabaseParameters(){
+    static Stream<CatalogParameterSet> existsDatabaseParameters(){
         //Unidimensional selection for existDatabase boundary values
         return Stream.of(
                 //valid db name
-                new ParameterSet("db1","db1",true,false, null),
+                new CatalogParameterSet("db1","db1",true,false, null),
                 //not valid db name (db doesn't exists, case sensitive)
-                new ParameterSet("db1","DB1",false,false, null),
+                new CatalogParameterSet("db1","DB1",false,false, null),
                 //not valid db name (db doesn't exists)
-                new ParameterSet("db1","db3",false,false, null),
+                new CatalogParameterSet("db1","db3",false,false, null),
                 //empty db name
-                new ParameterSet("db1","",false,true, Exception.class.getName()),
+                new CatalogParameterSet("db1","",false,true, Exception.class.getName()),
                 //null db name
-                new ParameterSet("db1",null,false,true, Exception.class.getName()),
+                new CatalogParameterSet("db1",null,false,true, Exception.class.getName()),
                 //special char
-                new ParameterSet("db1","*$p&cialDB!*",false,true, Exception.class.getName())
+                new CatalogParameterSet("db1","*$p&cialDB!*",false,true, Exception.class.getName())
                 );
     }
 
-    static Stream<ParameterSet> dropDatabaseParameters(){
+    static Stream<CatalogParameterSet> dropDatabaseParameters(){
         //Unidimensional selection for existDatabase boundary values
         return Stream.of(
                 //valid db name
-                new ParameterSet("db1","db2","db1",false, null),
+                new CatalogParameterSet("db1","db2","db1",false, null),
                 //not valid db name (db doesn't exists, case sensitive)
-                new ParameterSet("db1","DB1","db3",true, UndefinedDatabaseException.class.getName()),
+                new CatalogParameterSet("db1","DB1","db3",true, UndefinedDatabaseException.class.getName()),
                 //not valid db name (db doesn't exists)
-                new ParameterSet("db1","db2","db3",true, UndefinedDatabaseException.class.getName()),
+                new CatalogParameterSet("db1","db2","db3",true, UndefinedDatabaseException.class.getName()),
                 //empty db name
-                new ParameterSet("db1","db2","",true, Exception.class.getName()),
+                new CatalogParameterSet("db1","db2","",true, Exception.class.getName()),
                 //null db name
-                new ParameterSet("db1","db2",null,true, Exception.class.getName()),
+                new CatalogParameterSet("db1","db2",null,true, Exception.class.getName()),
                 //special char
-                new ParameterSet("db1","db2","*$p&cialDB!*",true, Exception.class.getName())
+                new CatalogParameterSet("db1","db2","*$p&cialDB!*",true, Exception.class.getName())
         );
     }
 
@@ -120,6 +121,7 @@ public class CatalogAdminClientTest {
     @BeforeEach
     public void configureMocks() throws Exception {
         this.client = cluster.newTajoClient();
+
         // Mocked CreateDatabase, it does 3 check before the creation
         Mockito.doAnswer(invocation -> {
             String dbName = invocation.getArguments()[0].toString();
@@ -185,48 +187,48 @@ public class CatalogAdminClientTest {
 
     @ParameterizedTest @Disabled
     @MethodSource("createDatabaseParameters")
-    public void createDatabaseTest(ParameterSet parameterSet){
+    public void createDatabaseTest(CatalogParameterSet catalogParameterSet){
         boolean isExceptionThrownOne;
         boolean isExceptionThrownTwo;
         Exception e1 = null, e2 = null;
         //CreateDatabase on mocked catalogAdminClient
         try {
-            this.mockedCatalogAdminClient.createDatabase(parameterSet.getExistingDB());
-            this.mockedCatalogAdminClient.createDatabase(parameterSet.getCreateDB());
+            this.mockedCatalogAdminClient.createDatabase(catalogParameterSet.getExistingDB());
+            this.mockedCatalogAdminClient.createDatabase(catalogParameterSet.getCreateDB());
             //if expectedException was false, test is gone correctly
             isExceptionThrownOne = false;
-            Assertions.assertFalse(parameterSet.isExpectedException());
+            Assertions.assertFalse(catalogParameterSet.isExpectedException());
         }
         catch (Exception actualE1){
             isExceptionThrownOne = true;
 
-            Assertions.assertNotNull(parameterSet.getExceptionClass());
-            Assertions.assertTrue(parameterSet.isExpectedException());
+            Assertions.assertNotNull(catalogParameterSet.getExceptionClass());
+            Assertions.assertTrue(catalogParameterSet.isExpectedException());
 
             // If it isn't unknown type of exception, check if it is the right one
-            if(!parameterSet.getExceptionClass().equals(Exception.class.getName())){
-                Assertions.assertEquals(parameterSet.getExceptionClass(),actualE1.getClass().getName());
+            if(!catalogParameterSet.getExceptionClass().equals(Exception.class.getName())){
+                Assertions.assertEquals(catalogParameterSet.getExceptionClass(),actualE1.getClass().getName());
                 e1 = actualE1;
             }
         }
 
         //CreateDatabase on catalogAdminClient implementation
         try {
-            client.createDatabase(parameterSet.getExistingDB());
-            client.createDatabase(parameterSet.getCreateDB());
+            client.createDatabase(catalogParameterSet.getExistingDB());
+            client.createDatabase(catalogParameterSet.getCreateDB());
             isExceptionThrownTwo = false;
             //if expectedException was false, test is gone correctly
-            Assertions.assertFalse(parameterSet.isExpectedException());
+            Assertions.assertFalse(catalogParameterSet.isExpectedException());
         }
         catch (Exception actualE2){
             isExceptionThrownTwo = true;
 
-            Assertions.assertNotNull(parameterSet.getExceptionClass());
-            Assertions.assertTrue(parameterSet.isExpectedException());
+            Assertions.assertNotNull(catalogParameterSet.getExceptionClass());
+            Assertions.assertTrue(catalogParameterSet.isExpectedException());
             System.out.println("Thrown exception :"+actualE2.getClass().getName());
             // If it isn't unknown type of exception, check if it is the right one
-            if(!parameterSet.getExceptionClass().equals(Exception.class.getName())) {
-                Assertions.assertEquals(parameterSet.getExceptionClass(), actualE2.getClass().getName());
+            if(!catalogParameterSet.getExceptionClass().equals(Exception.class.getName())) {
+                Assertions.assertEquals(catalogParameterSet.getExceptionClass(), actualE2.getClass().getName());
                 e2 = actualE2;
             }
         }
@@ -239,57 +241,57 @@ public class CatalogAdminClientTest {
 
     @ParameterizedTest @Disabled
     @MethodSource("existsDatabaseParameters")
-    public void existsDatabaseTest(ParameterSet parameterSet){
+    public void existsDatabaseTest(CatalogParameterSet catalogParameterSet){
         boolean isExceptionThrownOne,isExceptionThrownTwo;
         boolean existsOne = false, existsTwo = false;
 
         Exception e1 = null, e2 = null;
         //CreateDatabase on mocked catalogAdminClient and check if exists
         try {
-            this.mockedCatalogAdminClient.createDatabase(parameterSet.getExistingDB());
-            existsOne = this.mockedCatalogAdminClient.existDatabase(parameterSet.getExistDB());
+            this.mockedCatalogAdminClient.createDatabase(catalogParameterSet.getExistingDB());
+            existsOne = this.mockedCatalogAdminClient.existDatabase(catalogParameterSet.getExistDB());
             //if expectedException is false, test is going correctly
             isExceptionThrownOne = false;
-            Assertions.assertFalse(parameterSet.isExpectedException());
+            Assertions.assertFalse(catalogParameterSet.isExpectedException());
             //if expected exist result and the result are equals, test is going correctly
-            Assertions.assertEquals(existsOne,parameterSet.isExistResult());
+            Assertions.assertEquals(existsOne, catalogParameterSet.isExistResult());
 
         }
         catch (Exception actualE1){
             isExceptionThrownOne = true;
 
             //Check if exception is expected
-            Assertions.assertNotNull(parameterSet.getExceptionClass());
-            Assertions.assertTrue(parameterSet.isExpectedException());
+            Assertions.assertNotNull(catalogParameterSet.getExceptionClass());
+            Assertions.assertTrue(catalogParameterSet.isExpectedException());
 
             // If it isn't unknown type of exception, check if it is the right one
-            if(!parameterSet.getExceptionClass().equals(Exception.class.getName())){
-                Assertions.assertEquals(parameterSet.getExceptionClass(),actualE1.getClass().getName());
+            if(!catalogParameterSet.getExceptionClass().equals(Exception.class.getName())){
+                Assertions.assertEquals(catalogParameterSet.getExceptionClass(),actualE1.getClass().getName());
                 e1 = actualE1;
             }
         }
 
         //CreateDatabase on catalogAdminClient implementation
         try {
-            client.createDatabase(parameterSet.getExistingDB());
-            existsTwo = client.existDatabase(parameterSet.getExistDB());
+            client.createDatabase(catalogParameterSet.getExistingDB());
+            existsTwo = client.existDatabase(catalogParameterSet.getExistDB());
             isExceptionThrownTwo = false;
             //if expectedException was false, test is gone correctly
-            Assertions.assertFalse(parameterSet.isExpectedException());
+            Assertions.assertFalse(catalogParameterSet.isExpectedException());
             //if expected exist result and the result are equals, test is going correctly
-            Assertions.assertEquals(existsTwo,parameterSet.isExistResult());
+            Assertions.assertEquals(existsTwo, catalogParameterSet.isExistResult());
         }
         catch (Exception actualE2){
             isExceptionThrownTwo = true;
 
             //Check if exception is expected
-            Assertions.assertNotNull(parameterSet.getExceptionClass());
-            Assertions.assertTrue(parameterSet.isExpectedException());
+            Assertions.assertNotNull(catalogParameterSet.getExceptionClass());
+            Assertions.assertTrue(catalogParameterSet.isExpectedException());
 
             System.out.println("Thrown exception :"+actualE2.getClass().getName());
             // If it isn't unknown type of exception, check if it is the right one
-            if(!parameterSet.getExceptionClass().equals(Exception.class.getName())) {
-                Assertions.assertEquals(parameterSet.getExceptionClass(), actualE2.getClass().getName());
+            if(!catalogParameterSet.getExceptionClass().equals(Exception.class.getName())) {
+                Assertions.assertEquals(catalogParameterSet.getExceptionClass(), actualE2.getClass().getName());
                 e2 = actualE2;
             }
         }
@@ -305,50 +307,50 @@ public class CatalogAdminClientTest {
     /* Those tests don't fail cause thrown UndefinedNameException not for error caused by the input */
     @ParameterizedTest
     @MethodSource("dropDatabaseParameters")
-    public void dropDatabaseTest(ParameterSet parameterSet){
+    public void dropDatabaseTest(CatalogParameterSet catalogParameterSet){
         boolean isExceptionThrownOne;
         boolean isExceptionThrownTwo;
         Exception e1 = null, e2 = null;
         //DropDatabase on mocked catalogAdminClient
         try {
-            this.mockedCatalogAdminClient.createDatabase(parameterSet.getExistingDB());
-            this.mockedCatalogAdminClient.createDatabase(parameterSet.getCreateDB());
-            this.mockedCatalogAdminClient.dropDatabase(parameterSet.getDropDB());
+            this.mockedCatalogAdminClient.createDatabase(catalogParameterSet.getExistingDB());
+            this.mockedCatalogAdminClient.createDatabase(catalogParameterSet.getCreateDB());
+            this.mockedCatalogAdminClient.dropDatabase(catalogParameterSet.getDropDB());
             //if expectedException was false, test is gone correctly
             isExceptionThrownOne = false;
-            Assertions.assertFalse(parameterSet.isExpectedException());
+            Assertions.assertFalse(catalogParameterSet.isExpectedException());
         }
         catch (Exception actualE1){
             isExceptionThrownOne = true;
 
-            Assertions.assertNotNull(parameterSet.getExceptionClass());
-            Assertions.assertTrue(parameterSet.isExpectedException());
+            Assertions.assertNotNull(catalogParameterSet.getExceptionClass());
+            Assertions.assertTrue(catalogParameterSet.isExpectedException());
 
             // If it isn't unknown type of exception, check if it is the right one
-            if(!parameterSet.getExceptionClass().equals(Exception.class.getName())){
-                Assertions.assertEquals(parameterSet.getExceptionClass(),actualE1.getClass().getName());
+            if(!catalogParameterSet.getExceptionClass().equals(Exception.class.getName())){
+                Assertions.assertEquals(catalogParameterSet.getExceptionClass(),actualE1.getClass().getName());
                 e1 = actualE1;
             }
         }
 
         //DropDatabase on catalogAdminClient implementation
         try {
-            client.createDatabase(parameterSet.getExistingDB());
-            client.createDatabase(parameterSet.getCreateDB());
-            client.dropDatabase(parameterSet.getDropDB());
+            client.createDatabase(catalogParameterSet.getExistingDB());
+            client.createDatabase(catalogParameterSet.getCreateDB());
+            client.dropDatabase(catalogParameterSet.getDropDB());
             isExceptionThrownTwo = false;
             //if expectedException was false, test is gone correctly
-            Assertions.assertFalse(parameterSet.isExpectedException());
+            Assertions.assertFalse(catalogParameterSet.isExpectedException());
         }
         catch (Exception actualE2){
             isExceptionThrownTwo = true;
 
-            Assertions.assertNotNull(parameterSet.getExceptionClass());
-            Assertions.assertTrue(parameterSet.isExpectedException());
+            Assertions.assertNotNull(catalogParameterSet.getExceptionClass());
+            Assertions.assertTrue(catalogParameterSet.isExpectedException());
             System.out.println("Thrown exception :"+actualE2.getClass().getName());
             // If it isn't unknown type of exception, check if it is the right one
-            if(!parameterSet.getExceptionClass().equals(Exception.class.getName())) {
-                Assertions.assertEquals(parameterSet.getExceptionClass(), actualE2.getClass().getName());
+            if(!catalogParameterSet.getExceptionClass().equals(Exception.class.getName())) {
+                Assertions.assertEquals(catalogParameterSet.getExceptionClass(), actualE2.getClass().getName());
                 e2 = actualE2;
             }
         }

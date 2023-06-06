@@ -1,4 +1,4 @@
-package org.apache.tajo.client;
+package org.apache.tajo.client.catalogAdminClient;
 /*
         Licensed to the Apache Software Foundation (ASF) under one
         or more contributor license agreements.  See the NOTICE file
@@ -16,7 +16,7 @@ package org.apache.tajo.client;
         See the License for the specific language governing permissions and
         limitations under the License.
         */
-public class ParameterSet {
+public class CatalogParameterSet {
     private  String existingDB;
     private  String createDB;
     private  String existDB;
@@ -27,7 +27,7 @@ public class ParameterSet {
     private String exceptionClass;
 
     // Parameters for createDatabase
-    public ParameterSet(String existingDB, String createDB, boolean expectedException, String exceptionClass) {
+    public CatalogParameterSet(String existingDB, String createDB, boolean expectedException, String exceptionClass) {
         this.existingDB = existingDB;
         this.createDB = createDB;
         this.expectedException = expectedException;
@@ -35,7 +35,7 @@ public class ParameterSet {
     }
 
     // Parameters for existsDatabase
-    public ParameterSet(String existingDB, String existDB, boolean existResult, boolean expectedException, String exceptionClass) {
+    public CatalogParameterSet(String existingDB, String existDB, boolean existResult, boolean expectedException, String exceptionClass) {
         this.existingDB = existingDB;
         this.existDB = existDB;
         this.existResult = existResult;
@@ -44,7 +44,7 @@ public class ParameterSet {
     }
 
     // Parameter for dropDatabase
-    public ParameterSet(String existingDB, String createDB,String dropDB, boolean expectedException, String exceptionClass) {
+    public CatalogParameterSet(String existingDB, String createDB, String dropDB, boolean expectedException, String exceptionClass) {
         this.existingDB = existingDB;
         this.createDB = createDB;
         this.dropDB = dropDB;
