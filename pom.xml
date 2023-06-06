@@ -83,6 +83,7 @@
     <redirectTestOutputToFile>true</redirectTestOutputToFile>
     <testRetryCount>0</testRetryCount>
     <forkCount.variable>1</forkCount.variable>
+    <argLine>-Xmx2G -Djava.net.preferIPv4Stack=true -Dio.netty.leakDetection.level=paranoid </argLine>
   </properties>
 
   <modules>
@@ -318,7 +319,7 @@
         <artifactId>maven-surefire-report-plugin</artifactId>
         <version>${maven-surefire-plugin.version}</version>
         <configuration>
-        <argLine>${argLine} -Xmx2G -Djava.net.preferIPv4Stack=true -Dio.netty.leakDetection.level=paranoid </argLine>
+
           <aggregate>true</aggregate>
         </configuration>
       </plugin>

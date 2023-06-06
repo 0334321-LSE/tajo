@@ -345,7 +345,7 @@
               <forkCount>3</forkCount>
               <reuseForks>true</reuseForks>
               <trimStackTrace>false</trimStackTrace>
-              <argLine>@{argLine}</argLine>
+              <!--<argLine>@{argLine}</argLine>-->
               <systemProperties>
                 <tajo.test.enabled>true</tajo.test.enabled>
                 <tajo.test.data.dir>test-data${surefire.forkNumber}</tajo.test.data.dir>

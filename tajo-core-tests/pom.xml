@@ -422,7 +422,7 @@
                 </goals>
               </execution>
             </executions>
-            <configuration combine.self="override">
+<!--            <configuration combine.self="override">
               <forkCount>3</forkCount>
               <reuseForks>true</reuseForks>
               <trimStackTrace>false</trimStackTrace>
@@ -431,7 +431,7 @@
                 <tajo.test.enabled>true</tajo.test.enabled>
                 <tajo.test.data.dir>test-data${surefire.forkNumber}</tajo.test.data.dir>
               </systemProperties>
-            </configuration>
+            </configuration>-->
           </plugin>
         </plugins>
       </build>
