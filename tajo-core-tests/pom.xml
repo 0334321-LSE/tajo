@@ -59,6 +59,7 @@
         </executions>
         <configuration>
           <excludes>
+            <exclude>derby.log</exclude>
             <exclude>benchmark/**</exclude>
             <exclude>src/test/tpch/**</exclude>
             <exclude>src/test/resources/dataset/**</exclude>
@@ -426,8 +427,6 @@
               <reuseForks>true</reuseForks>
               <trimStackTrace>false</trimStackTrace>
               <argLine>@{argLine}</argLine>
-              <useSystemClassLoader>true</useSystemClassLoader>
-              <useManifestOnlyJar>true</useManifestOnlyJar>
               <systemProperties>
                 <tajo.test.enabled>true</tajo.test.enabled>
                 <tajo.test.data.dir>test-data${surefire.forkNumber}</tajo.test.data.dir>

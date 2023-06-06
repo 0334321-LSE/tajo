@@ -1,15 +1,29 @@
 package org.apache.tajo.client;
+/*
+        Licensed to the Apache Software Foundation (ASF) under one
+        or more contributor license agreements.  See the NOTICE file
+        distributed with this work for additional information
+        regarding copyright ownership.  The ASF licenses this file
+        to you under the Apache License, Version 2.0 (the
+        "License"); you may not use this file except in compliance
+        with the License.  You may obtain a copy of the License at
 
+        http://www.apache.org/licenses/LICENSE-2.0
+
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+        */
 import org.apache.tajo.TajoTestingCluster;
 import org.apache.tajo.TpchTestBase;
 import org.apache.tajo.exception.CannotDropCurrentDatabaseException;
 import org.apache.tajo.exception.DuplicateDatabaseException;
 import org.apache.tajo.exception.InsufficientPrivilegeException;
 import org.apache.tajo.exception.UndefinedDatabaseException;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Ignore;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Matchers;
@@ -169,8 +183,7 @@ public class CatalogAdminClientTest {
         }).when(mockedCatalogAdminClient).dropDatabase(Matchers.anyString());
     }
 
-/*
-    @ParameterizedTest
+    @ParameterizedTest @Disabled
     @MethodSource("createDatabaseParameters")
     public void createDatabaseTest(ParameterSet parameterSet){
         boolean isExceptionThrownOne;
@@ -223,9 +236,8 @@ public class CatalogAdminClientTest {
             Assertions.assertEquals(e1.getClass().getName(),e2.getClass().getName(),"Both the executions have thrown the same exception");
         System.out.println("Both the executions have been the same result");
     }
-*/
 
-   /* @ParameterizedTest
+    @ParameterizedTest @Disabled
     @MethodSource("existsDatabaseParameters")
     public void existsDatabaseTest(ParameterSet parameterSet){
         boolean isExceptionThrownOne,isExceptionThrownTwo;
@@ -289,7 +301,6 @@ public class CatalogAdminClientTest {
         Assertions.assertEquals(existsOne,existsTwo,"Not both the executions have the same output");
         System.out.println("Both the executions have been the same result");
     }
-*/
 
     /* Those tests don't fail cause thrown UndefinedNameException not for error caused by the input */
     @ParameterizedTest
