@@ -17,7 +17,6 @@
  */
 
 package org.apache.tajo;
-
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
@@ -28,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.tajo.*;
 import org.apache.tajo.algebra.*;
 import org.apache.tajo.annotation.Nullable;
 import org.apache.tajo.catalog.CatalogService;
@@ -164,6 +164,14 @@ public class QueryTestCaseBase {
   protected static LogicalOptimizer optimizer;
   protected static LogicalPlanVerifier postVerifier;
 
+  public static TajoConf getConf() {
+    return conf;
+  }
+
+  public static void setConf(TajoConf conf) {
+    QueryTestCaseBase.conf = conf;
+  }
+
   /** the base path of dataset directories */
   protected static Path datasetBasePath;
   /** the base path of query directories */
@@ -185,6 +193,7 @@ public class QueryTestCaseBase {
     optimizer = engine.getLogicalOptimizer();
     postVerifier = engine.getLogicalPlanVerifier();
   }
+
   /** It transiently contains created tables for the running test class. */
   private static String currentDatabase;
   private static Set<String> createdTableGlobalSet = new HashSet<>();
@@ -250,15 +259,15 @@ public class QueryTestCaseBase {
     BufferPoolMXBean direct = BufferPool.getDirectBufferPool();
     BufferPoolMXBean mapped = BufferPool.getMappedBufferPool();
     System.out.println(String.format("Used heap: %s/%s, direct:%s/%s, mapped:%s/%s, Active Threads: %d, Run: %s.%s",
-        FileUtil.humanReadableByteCount(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory(), false),
-        FileUtil.humanReadableByteCount(Runtime.getRuntime().maxMemory(), false),
-        FileUtil.humanReadableByteCount(direct.getMemoryUsed(), false),
-        FileUtil.humanReadableByteCount(direct.getTotalCapacity(), false),
-        FileUtil.humanReadableByteCount(mapped.getMemoryUsed(), false),
-        FileUtil.humanReadableByteCount(mapped.getTotalCapacity(), false),
-        Thread.activeCount(),
-        getClass().getSimpleName(),
-        name.getMethodName()));
+            FileUtil.humanReadableByteCount(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory(), false),
+            FileUtil.humanReadableByteCount(Runtime.getRuntime().maxMemory(), false),
+            FileUtil.humanReadableByteCount(direct.getMemoryUsed(), false),
+            FileUtil.humanReadableByteCount(direct.getTotalCapacity(), false),
+            FileUtil.humanReadableByteCount(mapped.getMemoryUsed(), false),
+            FileUtil.humanReadableByteCount(mapped.getTotalCapacity(), false),
+            Thread.activeCount(),
+            getClass().getSimpleName(),
+            name.getMethodName()));
   }
 
   @After
@@ -595,7 +604,7 @@ public class QueryTestCaseBase {
       queries = new QuerySpec[] {new DummyQuerySpec(parsedResults.get(i).getHistoryStatement(), null)};
       fromFile = true;  // do not append query index to result file
     }
-    
+
     try {
       for (String prepare : prepares) {
         client.executeQueryAndGetResult(prepare).close();
@@ -617,11 +626,11 @@ public class QueryTestCaseBase {
         // plan test
         if (prefix.length() > 0) {
           String planResultName = methodName + (fromFile ? "" : "." + (i + 1)) +
-              ((option.parameterized() && testParameter != null) ? "." + testParameter : "") + ".plan";
+                  ((option.parameterized() && testParameter != null) ? "." + testParameter : "") + ".plan";
           Path resultPath = StorageUtil.concatPath(currentResultPath, planResultName);
           if (currentResultFS.exists(resultPath)) {
             assertEquals("Plan Verification for: " + (i + 1) + " th test",
-                FileUtil.readTextFromStream(currentResultFS.open(resultPath)), prefix);
+                    FileUtil.readTextFromStream(currentResultFS.open(resultPath)), prefix);
           } else if (prefix.length() > 0) {
             // If there is no result file expected, create gold files for new tests.
             FileUtil.writeTextToStream(prefix, currentResultFS.create(resultPath));
@@ -639,7 +648,7 @@ public class QueryTestCaseBase {
         Path resultPath = StorageUtil.concatPath(currentResultPath, fileName);
         if (currentResultFS.exists(resultPath)) {
           assertEquals("Result Verification for: " + (i + 1) + " th test",
-              FileUtil.readTextFromStream(currentResultFS.open(resultPath)), resultSetToString(result, option.sort()));
+                  FileUtil.readTextFromStream(currentResultFS.open(resultPath)), resultSetToString(result, option.sort()));
         } else if (!isNull(result)) {
           // If there is no result file expected, create gold files for new tests.
           FileUtil.writeTextToStream(resultSetToString(result, option.sort()), currentResultFS.create(resultPath));
@@ -836,7 +845,7 @@ public class QueryTestCaseBase {
   }
 
   public void assertTablePropertyEquals(String tableName, String key, String expectedValue)
-      throws UndefinedTableException {
+          throws UndefinedTableException {
 
     TableDesc tableDesc = getTableDesc(tableName);
     assertEquals(expectedValue, tableDesc.getMeta().getProperty(key));
@@ -1003,7 +1012,7 @@ public class QueryTestCaseBase {
    * @return The table names created
    */
   public List<String> executeDDL(String ddlFileName, @Nullable String dataFileName, @Nullable String ... args)
-      throws Exception {
+          throws Exception {
 
     return executeDDL(ddlFileName, dataFileName, true, args);
   }
@@ -1032,7 +1041,7 @@ public class QueryTestCaseBase {
         CreateTable createTable = (CreateTable) expr;
         String tableName = createTable.getTableName();
         assertTrue("Table [" + tableName + "] creation is failed.",
-            client.updateQuery(parsedResult.getHistoryStatement()));
+                client.updateQuery(parsedResult.getHistoryStatement()));
 
         TableDesc createdTable = client.getTableDesc(tableName);
         String createdTableName = createdTable.getName();
@@ -1046,10 +1055,10 @@ public class QueryTestCaseBase {
         DropTable dropTable = (DropTable) expr;
         String tableName = dropTable.getTableName();
         assertTrue("table '" + tableName + "' existence check",
-            client.existTable(IdentifierUtil.buildFQName(currentDatabase, tableName)));
+                client.existTable(IdentifierUtil.buildFQName(currentDatabase, tableName)));
         assertTrue("table drop is failed.", client.updateQuery(parsedResult.getHistoryStatement()));
         assertFalse("table '" + tableName + "' dropped check",
-            client.existTable(IdentifierUtil.buildFQName(currentDatabase, tableName)));
+                client.existTable(IdentifierUtil.buildFQName(currentDatabase, tableName)));
         if (isLocalTable) {
           createdTableGlobalSet.remove(tableName);
         }

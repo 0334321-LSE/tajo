@@ -1,10 +1,14 @@
 package org.apache.tajo.client;
 
+import org.apache.tajo.QueryTestCaseBase;
 import org.apache.tajo.TajoTestingCluster;
 import org.apache.tajo.TpchTestBase;
 import org.apache.tajo.error.Errors;
 import org.apache.tajo.exception.*;
 import org.apache.tajo.ipc.ClientProtos;
+import org.apache.tajo.service.ServiceTracker;
+import org.apache.tajo.service.ServiceTrackerFactory;
+import org.apache.tajo.util.KeyValueSet;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -14,9 +18,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.stream.Stream;
 
-public class QueryClientTest {
+import static org.apache.tajo.QueryTestCaseBase.getConf;
+
+public class QueryClientTest  {
     private static TajoTestingCluster cluster;
     private TajoClient client;
+
+    private QueryClientImpl queryClient;
 
     private final String dbName = "TestingDB";
 
@@ -26,13 +34,13 @@ public class QueryClientTest {
     }
     @BeforeEach
     public void createDB() throws Exception {
-        this.client = cluster.newTajoClient();
-        this.client.createDatabase(this.dbName);
-        this.client.selectDatabase(this.dbName);
         String createTable = ("CREATE TABLE TestingTable (a1 int, a2 char);");
-        this.client.executeQuery(createTable);
-        String insertInto ="INSERT INTO testingTable values (7, 'T');";
-        this.client.executeQuery(insertInto);
+        String insertInto ="INSERT INTO TestingTable values (7, 'T');";
+        ServiceTracker serviceTracker = ServiceTrackerFactory.get(getConf());
+        this.queryClient = new QueryClientImpl(new SessionConnection(serviceTracker,"default",new KeyValueSet()));
+        this.queryClient.executeQuery(createTable);
+        this.queryClient.executeQuery(insertInto);
+
     }
 
     static Stream<QueryParameterSet> executeQueryParameters(){
@@ -69,7 +77,7 @@ public class QueryClientTest {
     public void executeQueryTest(QueryParameterSet queryParameterSet){
         try{
             //Check if the expected returnCode is equals to the real one
-            ClientProtos.SubmitQueryResponse response = this.client.executeQuery(queryParameterSet.getQuery());
+            ClientProtos.SubmitQueryResponse response = this.queryClient.executeQuery(queryParameterSet.getQuery());
             Assertions.assertEquals(queryParameterSet.getError(),response.getState().getReturnCode());
 
             //TODO also try to check the response on first case
@@ -100,7 +108,7 @@ public class QueryClientTest {
     @MethodSource("executeQueryAndGetResultParameters")
     public void executeAndGetResultTest(QueryParameterSet queryParameterSet){
         try{
-            ResultSet resultSet = this.client.executeQueryAndGetResult(queryParameterSet.getQuery());
+            ResultSet resultSet = this.queryClient.executeQueryAndGetResult(queryParameterSet.getQuery());
             if(queryParameterSet.isExpectedException())
                 Assertions.fail();
 
@@ -119,10 +127,9 @@ public class QueryClientTest {
 
     @AfterEach
     public void tearDownDB() throws UndefinedDatabaseException, InsufficientPrivilegeException, CannotDropCurrentDatabaseException {
-        this.client.selectDatabase("default");
-        this.client.dropDatabase(this.dbName);
-        if(this.client != null)
-            this.client.close();
+
+        if(this.queryClient != null)
+            this.queryClient.close();
 
     }
 
