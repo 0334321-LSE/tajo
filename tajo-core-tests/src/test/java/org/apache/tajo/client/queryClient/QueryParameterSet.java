@@ -1,4 +1,4 @@
-package org.apache.tajo.client;
+package org.apache.tajo.client.queryClient;
 
 import org.apache.tajo.error.Errors;
 

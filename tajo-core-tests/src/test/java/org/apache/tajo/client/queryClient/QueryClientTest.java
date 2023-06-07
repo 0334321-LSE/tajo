@@ -1,8 +1,7 @@
-package org.apache.tajo.client;
+package org.apache.tajo.client.queryClient;
 
-import org.apache.tajo.QueryTestCaseBase;
-import org.apache.tajo.TajoTestingCluster;
-import org.apache.tajo.TpchTestBase;
+import org.apache.tajo.client.QueryClientImpl;
+import org.apache.tajo.client.SessionConnection;
 import org.apache.tajo.error.Errors;
 import org.apache.tajo.exception.*;
 import org.apache.tajo.ipc.ClientProtos;

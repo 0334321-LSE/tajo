@@ -424,7 +424,7 @@
               </targetClasses>
               <targetTests>
                 <param>org.apache.tajo.client.catalogAdminClient.CatalogAdminClientTest</param>
-                <param>org.apache.tajo.client.QueryClientTest</param>
+                <param>org.apache.tajo.client.queryClient.QueryClientTest</param>
               </targetTests>
             </configuration>
           </plugin>
