@@ -40,6 +40,28 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+          </execution>
+        </executions>
+          <!--  <configuration combine.self="override">
+                <forkCount>3</forkCount>
+                <reuseForks>true</reuseForks>
+                <trimStackTrace>false</trimStackTrace>
+                <argLine>@{argLine}</argLine>
+                <systemProperties>
+                <tajo.test.enabled>true</tajo.test.enabled>
+                <tajo.test.data.dir>test-data${surefire.forkNumber}</tajo.test.data.dir>
+                </systemProperties>
+                </configuration>-->
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
           <configuration>
               <source>8</source>
@@ -386,6 +408,29 @@
   </dependencies>
 
   <profiles>
+    <!-- PIT profile for mutation coverage -->
+    <profile>
+      <id>pitProfile</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.pitest</groupId>
+            <artifactId>pitest-maven</artifactId>
+            <version>${pitest-maven-plguin.version}</version>
+            <configuration>
+              <targetClasses>
+                <param>org.apache.tajo.client.catalogAdminClient</param>
+                <param>org.apache.tajo.client</param>
+              </targetClasses>
+              <targetTests>
+                <param>org.apache.tajo.client.catalogAdminClient.CatalogAdminClientTest</param>
+                <param>org.apache.tajo.client.QueryClientTest</param>
+              </targetTests>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
     <profile>
       <id>jacoco-report</id>
       <activation>
@@ -412,28 +457,6 @@
                 </goals>
               </execution>
             </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <executions>
-              <execution>
-                <phase>test</phase>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-              </execution>
-            </executions>
-<!--            <configuration combine.self="override">
-              <forkCount>3</forkCount>
-              <reuseForks>true</reuseForks>
-              <trimStackTrace>false</trimStackTrace>
-              <argLine>@{argLine}</argLine>
-              <systemProperties>
-                <tajo.test.enabled>true</tajo.test.enabled>
-                <tajo.test.data.dir>test-data${surefire.forkNumber}</tajo.test.data.dir>
-              </systemProperties>
-            </configuration>-->
           </plugin>
         </plugins>
       </build>

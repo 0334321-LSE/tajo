@@ -83,7 +83,7 @@
     <redirectTestOutputToFile>true</redirectTestOutputToFile>
     <testRetryCount>0</testRetryCount>
     <forkCount.variable>1</forkCount.variable>
-    <argLine>-Xmx2G -Djava.net.preferIPv4Stack=true -Dio.netty.leakDetection.level=paranoid </argLine>
+    <!--<argLine>-Xmx2G -Djava.net.preferIPv4Stack=true -Dio.netty.leakDetection.level=paranoid </argLine>-->
     <pitest-maven-plguin.version>1.5.1</pitest-maven-plguin.version>
   </properties>
 

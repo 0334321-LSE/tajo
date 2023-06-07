@@ -111,13 +111,10 @@ public class QueryClientTest {
             boolean control2 = resultCharacter.equals("T");
             Assertions.assertEquals(control1,control2);
 
-        }catch(RuntimeException | TajoInternalError | TajoException e){
+        }catch(RuntimeException | TajoInternalError | TajoException | SQLException e){
             System.out.println("Exception has been thrown: "+e.getClass().getName());
             Assertions.assertTrue(queryParameterSet.isExpectedException());
-        } catch (SQLException e) {
-            Assertions.assertTrue(queryParameterSet.isExpectedException());
         }
-
     }
 
     @AfterEach
