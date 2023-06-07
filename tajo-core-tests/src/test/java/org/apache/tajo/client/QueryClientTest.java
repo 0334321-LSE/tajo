@@ -42,7 +42,7 @@ public class QueryClientTest {
                 //Query non valida (sintassi)
                 new QueryParameterSet("SELECT ! FROM testingTable",true, Errors.ResultCode.SYNTAX_ERROR),
                 //Query non valida (parametri)
-                new QueryParameterSet("INSERT INTO testingTable values ('A', 3)",true, Errors.ResultCode.UNDEFINED_COLUMN),
+                new QueryParameterSet("INSERT INTO testingTable values (String, 3)",true, Errors.ResultCode.UNDEFINED_COLUMN),
                 //Query vuota
                 new QueryParameterSet("",true, Errors.ResultCode.INTERNAL_ERROR),
                 //Query null
@@ -115,7 +115,7 @@ public class QueryClientTest {
             System.out.println("Exception has been thrown: "+e.getClass().getName());
             Assertions.assertTrue(queryParameterSet.isExpectedException());
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            Assertions.assertTrue(queryParameterSet.isExpectedException());
         }
 
     }
