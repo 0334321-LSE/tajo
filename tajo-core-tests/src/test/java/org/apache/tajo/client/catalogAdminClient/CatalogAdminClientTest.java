@@ -19,22 +19,30 @@ package org.apache.tajo.client.catalogAdminClient;
 import org.apache.tajo.TajoTestingCluster;
 import org.apache.tajo.TpchTestBase;
 import org.apache.tajo.client.CatalogAdminClient;
+import org.apache.tajo.client.CatalogAdminClientImpl;
+import org.apache.tajo.client.SessionConnection;
 import org.apache.tajo.client.TajoClient;
 import org.apache.tajo.exception.CannotDropCurrentDatabaseException;
 import org.apache.tajo.exception.DuplicateDatabaseException;
 import org.apache.tajo.exception.InsufficientPrivilegeException;
 import org.apache.tajo.exception.UndefinedDatabaseException;
+import org.apache.tajo.service.ServiceTracker;
+import org.apache.tajo.service.ServiceTrackerFactory;
+import org.apache.tajo.util.KeyValueSet;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+
+import static org.apache.tajo.QueryTestCaseBase.getConf;
 
 public class CatalogAdminClientTest {
     //Pattern for db name, now we accept also - _ as special character
@@ -43,10 +51,9 @@ public class CatalogAdminClientTest {
     private Matcher matcher;
     private final CatalogAdminClient mockedCatalogAdminClient;
 
-    private ArrayList<String> databaseList;
+    private CatalogAdminClientImpl catalogAdminClient;
 
-    private static TajoTestingCluster cluster;
-    private TajoClient client;
+    private ArrayList<String> databaseList;
 
     static Stream<CatalogParameterSet> createDatabaseParameters(){
 
@@ -91,7 +98,7 @@ public class CatalogAdminClientTest {
                 //valid db name
                 new CatalogParameterSet("db1","db2","db1",false, null),
                 //not valid db name (db doesn't exists, case sensitive)
-                new CatalogParameterSet("db1","DB1","db3",true, UndefinedDatabaseException.class.getName()),
+                new CatalogParameterSet("db1","db2","DB2",true, UndefinedDatabaseException.class.getName()),
                 //not valid db name (db doesn't exists)
                 new CatalogParameterSet("db1","db2","db3",true, UndefinedDatabaseException.class.getName()),
                 //empty db name
@@ -111,16 +118,12 @@ public class CatalogAdminClientTest {
         this.databaseList = new ArrayList<>();
     }
 
-    @BeforeAll
-    public static void setUp() {
-        cluster = TpchTestBase.getInstance().getTestingCluster();
-    }
-
     /** Define with mock a dummy implementation of create, exists and drop DB. <br />
      * After that, test the real implementation and check if the result are the same.*/
     @BeforeEach
     public void configureMocks() throws Exception {
-        this.client = cluster.newTajoClient();
+        ServiceTracker serviceTracker = ServiceTrackerFactory.get(getConf());
+        this.catalogAdminClient = new CatalogAdminClientImpl(new SessionConnection(serviceTracker,"default",new KeyValueSet()));
 
         // Mocked CreateDatabase, it does 3 check before the creation
         Mockito.doAnswer(invocation -> {
@@ -214,8 +217,8 @@ public class CatalogAdminClientTest {
 
         //CreateDatabase on catalogAdminClient implementation
         try {
-            client.createDatabase(catalogParameterSet.getExistingDB());
-            client.createDatabase(catalogParameterSet.getCreateDB());
+            this.catalogAdminClient.createDatabase(catalogParameterSet.getExistingDB());
+            this.catalogAdminClient.createDatabase(catalogParameterSet.getCreateDB());
             isExceptionThrownTwo = false;
             //if expectedException was false, test is gone correctly
             Assertions.assertFalse(catalogParameterSet.isExpectedException());
@@ -273,8 +276,8 @@ public class CatalogAdminClientTest {
 
         //CreateDatabase on catalogAdminClient implementation
         try {
-            client.createDatabase(catalogParameterSet.getExistingDB());
-            existsTwo = client.existDatabase(catalogParameterSet.getExistDB());
+            this.catalogAdminClient.createDatabase(catalogParameterSet.getExistingDB());
+            existsTwo = this.catalogAdminClient.existDatabase(catalogParameterSet.getExistDB());
             isExceptionThrownTwo = false;
             //if expectedException was false, test is gone correctly
             Assertions.assertFalse(catalogParameterSet.isExpectedException());
@@ -335,9 +338,9 @@ public class CatalogAdminClientTest {
 
         //DropDatabase on catalogAdminClient implementation
         try {
-            client.createDatabase(catalogParameterSet.getExistingDB());
-            client.createDatabase(catalogParameterSet.getCreateDB());
-            client.dropDatabase(catalogParameterSet.getDropDB());
+            this.catalogAdminClient.createDatabase(catalogParameterSet.getExistingDB());
+            this.catalogAdminClient.createDatabase(catalogParameterSet.getCreateDB());
+            this.catalogAdminClient.dropDatabase(catalogParameterSet.getDropDB());
             isExceptionThrownTwo = false;
             //if expectedException was false, test is gone correctly
             Assertions.assertFalse(catalogParameterSet.isExpectedException());
@@ -362,18 +365,18 @@ public class CatalogAdminClientTest {
     }
 
     @AfterEach
-    void tearDown() throws UndefinedDatabaseException, InsufficientPrivilegeException, CannotDropCurrentDatabaseException {
+    void tearDown() throws UndefinedDatabaseException, InsufficientPrivilegeException, CannotDropCurrentDatabaseException, IOException {
         //Remove remaining database except the default ones
-        List<String> databases = new ArrayList<>(client.getAllDatabaseNames());
+        List<String> databases = new ArrayList<>(this.catalogAdminClient.getAllDatabaseNames());
 
         databases.remove("information_schema");
         databases.remove("default");
 
         for(String database: databases)
-            client.dropDatabase(database);
+            this.catalogAdminClient.dropDatabase(database);
 
-        if(client!= null)
-            client.close();
+        if(this.catalogAdminClient!= null)
+            this.catalogAdminClient.close();
     }
 
 

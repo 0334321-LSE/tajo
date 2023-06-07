@@ -21,17 +21,10 @@ import java.util.stream.Stream;
 import static org.apache.tajo.QueryTestCaseBase.getConf;
 
 public class QueryClientTest  {
-    private static TajoTestingCluster cluster;
-    private TajoClient client;
 
     private QueryClientImpl queryClient;
 
-    private final String dbName = "TestingDB";
 
-    @BeforeAll
-    public static void setUp() {
-        cluster = TpchTestBase.getInstance().getTestingCluster();
-    }
     @BeforeEach
     public void createDB() throws Exception {
         String createTable = ("CREATE TABLE TestingTable (a1 int, a2 char);");
