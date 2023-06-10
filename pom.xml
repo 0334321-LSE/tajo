@@ -84,7 +84,8 @@
     <testRetryCount>0</testRetryCount>
     <forkCount.variable>1</forkCount.variable>
     <!--<argLine>-Xmx2G -Djava.net.preferIPv4Stack=true -Dio.netty.leakDetection.level=paranoid </argLine>-->
-    <pitest-maven-plguin.version>1.5.1</pitest-maven-plguin.version>
+    <pitest-maven-plugin.version>1.9.0</pitest-maven-plugin.version>
+    <pitest-junit5-maven-plugin.version>1.0.0</pitest-junit5-maven-plugin.version>
   </properties>
 
   <modules>
@@ -320,7 +321,6 @@
         <artifactId>maven-surefire-report-plugin</artifactId>
         <version>${maven-surefire-plugin.version}</version>
         <configuration>
-
           <aggregate>true</aggregate>
         </configuration>
       </plugin>
@@ -373,7 +373,7 @@
 
   <profiles>
     <profile>
-      <id>jacoco-coverage</id>
+      <id>jacocoProfile</id>
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>

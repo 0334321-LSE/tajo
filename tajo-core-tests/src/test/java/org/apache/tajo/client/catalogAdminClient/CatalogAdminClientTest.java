@@ -16,12 +16,10 @@ package org.apache.tajo.client.catalogAdminClient;
         See the License for the specific language governing permissions and
         limitations under the License.
         */
-import org.apache.tajo.TajoTestingCluster;
-import org.apache.tajo.TpchTestBase;
+
 import org.apache.tajo.client.CatalogAdminClient;
 import org.apache.tajo.client.CatalogAdminClientImpl;
 import org.apache.tajo.client.SessionConnection;
-import org.apache.tajo.client.TajoClient;
 import org.apache.tajo.exception.CannotDropCurrentDatabaseException;
 import org.apache.tajo.exception.DuplicateDatabaseException;
 import org.apache.tajo.exception.InsufficientPrivilegeException;
@@ -29,7 +27,10 @@ import org.apache.tajo.exception.UndefinedDatabaseException;
 import org.apache.tajo.service.ServiceTracker;
 import org.apache.tajo.service.ServiceTrackerFactory;
 import org.apache.tajo.util.KeyValueSet;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Matchers;

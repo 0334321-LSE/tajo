@@ -42,7 +42,7 @@
     </dependencies>
     <profiles>
         <profile>
-            <id>jacoco-report-aggregate</id>
+            <id>jacocoProfile</id>
             <build>
             <plugins>
                 <plugin>
