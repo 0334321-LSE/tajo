@@ -79,6 +79,7 @@
     <sonar.coverage.jacoco.xmlReportPaths>../tests/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
     <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
+    <maven-failsafe-plugin.version>3.1.2</maven-failsafe-plugin.version>
     <maven.compiler.version>3.8.1</maven.compiler.version>
     <redirectTestOutputToFile>true</redirectTestOutputToFile>
     <testRetryCount>0</testRetryCount>
@@ -117,10 +118,19 @@
   <build>
     <pluginManagement>
       <plugins>
+        <!-- FAILSAFE FOR IT -->
         <plugin>
-          <groupId>org.jacoco</groupId>
-          <artifactId>jacoco-maven-plugin</artifactId>
-          <version>${jacoco-maven-plugin.version}</version>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>${maven-failsafe-plugin.version}</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -168,6 +178,7 @@
           <artifactId>apache-rat-plugin</artifactId>
           <version>0.8</version>
         </plugin>
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>

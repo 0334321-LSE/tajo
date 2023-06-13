@@ -19,10 +19,25 @@ package org.apache.tajo.client.queryClient;
 import org.apache.tajo.error.Errors;
 
 public class QueryParameterSet {
+
+
     private String query;
     private boolean expectedException;
 
+    private String queryStatus;
+
+    public String getQueryStatus() {
+        return queryStatus;
+    }
+
     private Errors.ResultCode error;
+
+    public QueryParameterSet(String query, boolean expectedException, String queryStatus, Errors.ResultCode error) {
+        this.query = query;
+        this.expectedException = expectedException;
+        this.queryStatus = queryStatus;
+        this.error = error;
+    }
 
     public QueryParameterSet(String query, boolean expectedException, Errors.ResultCode error) {
         this.query = query;

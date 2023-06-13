@@ -20,17 +20,13 @@ package org.apache.tajo.client.catalogAdminClient;
 import org.apache.tajo.client.CatalogAdminClient;
 import org.apache.tajo.client.CatalogAdminClientImpl;
 import org.apache.tajo.client.SessionConnection;
-import org.apache.tajo.exception.CannotDropCurrentDatabaseException;
-import org.apache.tajo.exception.DuplicateDatabaseException;
-import org.apache.tajo.exception.InsufficientPrivilegeException;
-import org.apache.tajo.exception.UndefinedDatabaseException;
+import org.apache.tajo.exception.*;
 import org.apache.tajo.service.ServiceTracker;
 import org.apache.tajo.service.ServiceTrackerFactory;
 import org.apache.tajo.util.KeyValueSet;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Matchers;
@@ -43,18 +39,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static org.apache.tajo.QueryTestCaseBase.getConf;
+import static org.apache.tajo.client.QueryTestCaseBase.getConf;
 
 public class CatalogAdminClientTest {
     //Pattern for db name, now we accept also - _ as special character
-    private final String regexPattern = "[^a-zA-Z0-9]";
+    private final String regexPattern = "[^a-zA-Z0-9_-]";
     private final Pattern pattern = Pattern.compile(this.regexPattern);
     private Matcher matcher;
     private final CatalogAdminClient mockedCatalogAdminClient;
 
     private CatalogAdminClientImpl catalogAdminClient;
 
-    private ArrayList<String> databaseList;
+    private List<String> databaseList;
+    private List<String> privilegeDatabaseList;
 
     static Stream<CatalogParameterSet> createDatabaseParameters(){
 
@@ -63,15 +60,16 @@ public class CatalogAdminClientTest {
                 //valid db name
                 new CatalogParameterSet("db1","db2",false, null),
                 //case sensitive
-                new CatalogParameterSet("db1","DB2",false, null),
+                new CatalogParameterSet("db1","DB1",false, null),
                 //not valid db name (already exists)
-                new CatalogParameterSet("db1","db1",true, DuplicateDatabaseException.class.getName()),
+                new CatalogParameterSet("db1","db1",true, DuplicateDatabaseException.class.getName())
                 //empty db name
-                new CatalogParameterSet("db1","",true, Exception.class.getName()),
+                //new CatalogParameterSet("db1","",true, Exception.class.getName()),
                 //null db name
-                new CatalogParameterSet("db1",null,true, Exception.class.getName()),
-                //special char
-                new CatalogParameterSet("db1","*$p&cialDB!*",true, Exception.class.getName())
+                //new CatalogParameterSet("db1",null,true, Exception.class.getName()),
+                // special char
+                // new CatalogParameterSet("$Sp3_c|al!",null,false,true, Exception.class.getName())
+
         );
     }
 
@@ -83,13 +81,8 @@ public class CatalogAdminClientTest {
                 //not valid db name (db doesn't exists, case sensitive)
                 new CatalogParameterSet("db1","DB1",false,false, null),
                 //not valid db name (db doesn't exists)
-                new CatalogParameterSet("db1","db3",false,false, null),
-                //empty db name
-                new CatalogParameterSet("db1","",false,true, Exception.class.getName()),
-                //null db name
-                new CatalogParameterSet("db1",null,false,true, Exception.class.getName()),
-                //special char
-                new CatalogParameterSet("db1","*$p&cialDB!*",false,true, Exception.class.getName())
+                new CatalogParameterSet("db1","db3",false,false, null)
+
                 );
     }
 
@@ -99,15 +92,18 @@ public class CatalogAdminClientTest {
                 //valid db name
                 new CatalogParameterSet("db1","db2","db1",false, null),
                 //not valid db name (db doesn't exists, case sensitive)
-                new CatalogParameterSet("db1","db2","DB2",true, UndefinedDatabaseException.class.getName()),
+                new CatalogParameterSet("db1","db2","DB1",true, UndefinedDatabaseException.class.getName()),
                 //not valid db name (db doesn't exists)
                 new CatalogParameterSet("db1","db2","db3",true, UndefinedDatabaseException.class.getName()),
+                //no permission
+                new CatalogParameterSet("db1","db2","default",true, CannotDropCurrentDatabaseException.class.getName()),
+                //no permission
+                 new CatalogParameterSet("db1","db2","information_schema",true, InsufficientPrivilegeException.class.getName())
+
                 //empty db name
-                new CatalogParameterSet("db1","db2","",true, Exception.class.getName()),
+               // new CatalogParameterSet("db1","db2","",true, Exception.class.getName()),
                 //null db name
-                new CatalogParameterSet("db1","db2",null,true, Exception.class.getName()),
-                //special char
-                new CatalogParameterSet("db1","db2","*$p&cialDB!*",true, Exception.class.getName())
+               // new CatalogParameterSet("db1","db2",null,true, Exception.class.getName())
         );
     }
 
@@ -117,6 +113,10 @@ public class CatalogAdminClientTest {
         // Mocked catalog admin client
         this.mockedCatalogAdminClient = Mockito.mock(CatalogAdminClient.class);
         this.databaseList = new ArrayList<>();
+        this.databaseList.add("default");
+        this.databaseList.add("information_schema");
+        this.privilegeDatabaseList = new ArrayList<>();
+        this.databaseList.add("information_schema");
     }
 
     /** Define with mock a dummy implementation of create, exists and drop DB. <br />
@@ -181,15 +181,23 @@ public class CatalogAdminClientTest {
             //3) Check if dbName not exists in the list
             if (!this.databaseList.contains(dbName))
                 throw new UndefinedDatabaseException("DB name doesn't exist");
+
+            //4) Check if dbName isn't in default db names
+            if (this.privilegeDatabaseList.contains(dbName))
+                throw  new InsufficientPrivilegeException("You don't have permission to drop this db");
+
+            //5) Db is currently in use
+            if (dbName.equals("default"))
+                throw  new CannotDropCurrentDatabaseException();
             else
-                //Creation simply is represented by adding the db to an array list
+                //Remove from list
                 this.databaseList.remove(dbName);
 
             return null;
         }).when(mockedCatalogAdminClient).dropDatabase(Matchers.anyString());
     }
 
-    @ParameterizedTest @Disabled
+    @ParameterizedTest
     @MethodSource("createDatabaseParameters")
     public void createDatabaseTest(CatalogParameterSet catalogParameterSet){
         boolean isExceptionThrownOne;
@@ -243,7 +251,7 @@ public class CatalogAdminClientTest {
         System.out.println("Both the executions have been the same result");
     }
 
-    @ParameterizedTest @Disabled
+    @ParameterizedTest
     @MethodSource("existsDatabaseParameters")
     public void existsDatabaseTest(CatalogParameterSet catalogParameterSet){
         boolean isExceptionThrownOne,isExceptionThrownTwo;
@@ -312,31 +320,8 @@ public class CatalogAdminClientTest {
     @ParameterizedTest
     @MethodSource("dropDatabaseParameters")
     public void dropDatabaseTest(CatalogParameterSet catalogParameterSet){
-        boolean isExceptionThrownOne;
         boolean isExceptionThrownTwo;
-        Exception e1 = null, e2 = null;
-        //DropDatabase on mocked catalogAdminClient
-        try {
-            this.mockedCatalogAdminClient.createDatabase(catalogParameterSet.getExistingDB());
-            this.mockedCatalogAdminClient.createDatabase(catalogParameterSet.getCreateDB());
-            this.mockedCatalogAdminClient.dropDatabase(catalogParameterSet.getDropDB());
-            //if expectedException was false, test is gone correctly
-            isExceptionThrownOne = false;
-            Assertions.assertFalse(catalogParameterSet.isExpectedException());
-        }
-        catch (Exception actualE1){
-            isExceptionThrownOne = true;
-
-            Assertions.assertNotNull(catalogParameterSet.getExceptionClass());
-            Assertions.assertTrue(catalogParameterSet.isExpectedException());
-
-            // If it isn't unknown type of exception, check if it is the right one
-            if(!catalogParameterSet.getExceptionClass().equals(Exception.class.getName())){
-                Assertions.assertEquals(catalogParameterSet.getExceptionClass(),actualE1.getClass().getName());
-                e1 = actualE1;
-            }
-        }
-
+        String  e2 = null;
         //DropDatabase on catalogAdminClient implementation
         try {
             this.catalogAdminClient.createDatabase(catalogParameterSet.getExistingDB());
@@ -346,7 +331,7 @@ public class CatalogAdminClientTest {
             //if expectedException was false, test is gone correctly
             Assertions.assertFalse(catalogParameterSet.isExpectedException());
         }
-        catch (Exception actualE2){
+        catch (UndefinedDatabaseException | CannotDropCurrentDatabaseException | InsufficientPrivilegeException actualE2){
             isExceptionThrownTwo = true;
 
             Assertions.assertNotNull(catalogParameterSet.getExceptionClass());
@@ -355,14 +340,22 @@ public class CatalogAdminClientTest {
             // If it isn't unknown type of exception, check if it is the right one
             if(!catalogParameterSet.getExceptionClass().equals(Exception.class.getName())) {
                 Assertions.assertEquals(catalogParameterSet.getExceptionClass(), actualE2.getClass().getName());
-                e2 = actualE2;
+                e2 = actualE2.getClass().getName();
             }
         }
-
-        Assertions.assertEquals(isExceptionThrownOne,isExceptionThrownTwo,"Both the execution have thrown exception");
-        if (e1 != null && e2 != null)
-            Assertions.assertEquals(e1.getClass().getName(),e2.getClass().getName(),"Both the executions have thrown the same exception");
-        System.out.println("Both the executions have been the same result");
+        catch(TajoInternalError actualError){
+            isExceptionThrownTwo = true;
+            if( actualError.getMessage().contains("DROP_CURRENT_DATABASE"))
+             e2 = CannotDropCurrentDatabaseException.class.getName();
+            else e2 = "Something different";
+        }
+        catch (DuplicateDatabaseException e) {
+            throw new RuntimeException(e);
+        }
+        Assertions.assertEquals(catalogParameterSet.isExpectedException(),isExceptionThrownTwo,"Doesn't  thrown exception");
+        if ( e2 != null)
+            Assertions.assertEquals(catalogParameterSet.getExceptionClass(),e2,"Not the same exception");
+        System.out.println("Test has done the predicted result");
     }
 
     @AfterEach

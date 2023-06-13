@@ -16,8 +16,7 @@
  * limitations under the License.
  */
 
-package org.apache.tajo;
-import com.google.common.annotations.VisibleForTesting;
+package org.apache.tajo.client;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
@@ -36,7 +35,6 @@ import org.apache.tajo.catalog.TableDesc;
 import org.apache.tajo.cli.tsql.InvalidStatementException;
 import org.apache.tajo.cli.tsql.ParsedResult;
 import org.apache.tajo.cli.tsql.SimpleParser;
-import org.apache.tajo.client.TajoClient;
 import org.apache.tajo.conf.TajoConf;
 import org.apache.tajo.engine.query.QueryContext;
 import org.apache.tajo.exception.InsufficientPrivilegeException;

@@ -27,11 +27,11 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 
-import static org.apache.tajo.QueryTestCaseBase.getConf;
+import static org.apache.tajo.client.QueryTestCaseBase.getConf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
-public class TajoClientIntegrationTest {
+public class TajoClientIT {
     private TajoClientImplForTesting tajoClient;
 
     private CatalogAdminClientImpl catalogAdminClient = mock(CatalogAdminClientImpl.class);

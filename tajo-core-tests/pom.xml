@@ -49,7 +49,7 @@
             </goals>
           </execution>
         </executions>
-            <configuration combine.self="override">
+    <!--        <configuration combine.self="override">
                 <forkCount>3</forkCount>
                 <reuseForks>true</reuseForks>
                 <trimStackTrace>false</trimStackTrace>
@@ -58,7 +58,7 @@
                 <tajo.test.enabled>true</tajo.test.enabled>
                 <tajo.test.data.dir>test-data${surefire.forkNumber}</tajo.test.data.dir>
                 </systemProperties>
-            </configuration>
+            </configuration>-->
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -99,9 +99,9 @@
         <version>${maven-surefire-plugin.version}</version>
         <configuration>
           <redirectTestOutputToFile>${redirectTestOutputToFile}</redirectTestOutputToFile>
-          <systemProperties>
+<!--          <systemProperties>
             <tajo.test.enabled>true</tajo.test.enabled>
-          </systemProperties>
+          </systemProperties>-->
 <!--
           <argLine>&#45;&#45;add-opens java.base/sun.misc=ALL-UNNAMED &#45;&#45;add-opens java.base/sun.nio.ch=ALL-UNNAMED</argLine>
 -->
