@@ -16,7 +16,7 @@ jobs:
         with:
           java-version: 8
           distribution: 'temurin'
-      - name: Build
+      - name: launch-pit
         run: mvn eu.stamp-project:pitmp-maven-plugin:run
       - name: Upload report
         uses: actions/upload-artifact@v3

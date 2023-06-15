@@ -16,7 +16,7 @@ jobs:
         with:
           java-version: 8
           distribution: 'temurin'
-      - name: Build
+      - name: jacoco-coverage
         run: mvn clean verify -P jacocoProfile
       - name: Upload report
         uses: actions/upload-artifact@v3
