@@ -16,14 +16,12 @@ package org.apache.tajo.client.queryClient;
         See the License for the specific language governing permissions and
         limitations under the License.
         */
+
 import org.apache.tajo.QueryId;
 import org.apache.tajo.TajoProtos;
 import org.apache.tajo.client.QueryClientImpl;
 import org.apache.tajo.client.SessionConnection;
-import org.apache.tajo.exception.CannotDropCurrentDatabaseException;
-import org.apache.tajo.exception.InsufficientPrivilegeException;
 import org.apache.tajo.exception.QueryNotFoundException;
-import org.apache.tajo.exception.UndefinedDatabaseException;
 import org.apache.tajo.ipc.ClientProtos;
 import org.apache.tajo.service.ServiceTracker;
 import org.apache.tajo.service.ServiceTrackerFactory;
@@ -62,8 +60,9 @@ public class GetQueryStatusTest {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object[]> getParametrs(){
-        return Arrays.asList(new Object[][]{ //Query valida
+    public static Collection<Object[]> getParameters(){
+        return Arrays.asList(new Object[][]{
+                //Query valida
                 {"VALIDA",false, TajoProtos.QueryState.QUERY_SUCCEEDED.toString()},
                 //QueryID non valida
                 {"NON_VALIDA",true, null},

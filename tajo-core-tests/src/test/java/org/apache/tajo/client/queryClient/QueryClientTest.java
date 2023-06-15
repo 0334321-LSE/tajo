@@ -125,7 +125,7 @@ public class QueryClientTest  {
         );
     }
 
-    @ParameterizedTest
+    @ParameterizedTest @Disabled
     @MethodSource("executeQueryParameters")
     public void executeQueryTest(QueryParameterSet queryParameterSet){
         try{
@@ -139,7 +139,7 @@ public class QueryClientTest  {
         }
     }
 
-    @ParameterizedTest
+    @ParameterizedTest @Disabled
     @MethodSource("executeQueryAndGetResultParameters")
     public void executeAndGetResultTest(QueryParameterSet queryParameterSet){
         try{
@@ -160,7 +160,7 @@ public class QueryClientTest  {
         }
     }
 
-    @ParameterizedTest
+    @ParameterizedTest @Disabled
     @MethodSource("getQueryStatusResultParameters")
     public void getQueryStatusTest(QueryParameterSet queryParameterSet){
         String statusName;

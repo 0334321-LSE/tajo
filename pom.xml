@@ -89,6 +89,7 @@
     <pitest-maven-plugin.version>1.4.2</pitest-maven-plugin.version>
     <pitest-junit5-maven-plugin.version>0.16</pitest-junit5-maven-plugin.version>
     <pitmp-maven-plugin.version>1.3.6</pitmp-maven-plugin.version>
+    <junit.version>4.12</junit.version>
   </properties>
 
   <modules>
@@ -117,6 +118,25 @@
     <module>tests</module>
   </modules>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <!-- test dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
   <build>
     <pluginManagement>
       <plugins>
@@ -124,9 +144,6 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-report-plugin</artifactId>
           <version>${maven-surefire-plugin.version}</version>
-          <configuration>
-
-          </configuration>
         </plugin>
 
         <plugin>
@@ -332,28 +349,21 @@
                All PIT's properties can be used.
           -->
           <configuration>
-            <mutators>
-              <mutator>
-                RETURN_VALS
-              </mutator>
-            </mutators>
-            <maxMutationsPerClass>1</maxMutationsPerClass>
-            <targetModules>
-              <param>tajo-core-tests</param>
-              <param>tajo-client</param>
-            </targetModules>
+            <maxMutationsPerClass>5</maxMutationsPerClass>
             <targetClasses>
               <param>org.apache.tajo.client.CatalogAdminClientImpl</param>
               <param>org.apache.tajo.client.QueryClientImpl</param>
             </targetClasses>
             <targetTests>
-              <param>org.apache.tajo.client.catalogAdminClient.CatalogAdminClientTest</param>
+              <param>org.apache.tajo.client.catalogAdminClient.CreateDatabaseTest</param>
+              <param>org.apache.tajo.client.catalogAdminClient.DropDatabaseTest</param>
+              <param>org.apache.tajo.client.catalogAdminClient.ExistsDatabaseTest</param>
               <param>org.apache.tajo.client.queryClient.ExecuteQueryResultTest</param>
               <param>org.apache.tajo.client.queryClient.GetQueryStatusTest</param>
               <param>org.apache.tajo.client.queryClient.ExecuteQueryTest</param>
-              <param>org.apache.tajo.client.TajoClientIT</param>
+
             </targetTests>
-            <threads>1</threads>
+            <threads>2</threads>
           </configuration>
         </plugin>
 
@@ -449,6 +459,8 @@
 
 
   <profiles>
+
+
     <profile>
       <id>jacocoProfile</id>
       <activation>

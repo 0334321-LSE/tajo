@@ -27,6 +27,7 @@ import org.apache.tajo.util.KeyValueSet;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Matchers;
@@ -116,7 +117,7 @@ public class CatalogAdminClientTest {
         this.databaseList.add("default");
         this.databaseList.add("information_schema");
         this.privilegeDatabaseList = new ArrayList<>();
-        this.databaseList.add("information_schema");
+        this.privilegeDatabaseList.add("information_schema");
     }
 
     /** Define with mock a dummy implementation of create, exists and drop DB. <br />
@@ -197,7 +198,7 @@ public class CatalogAdminClientTest {
         }).when(mockedCatalogAdminClient).dropDatabase(Matchers.anyString());
     }
 
-    @ParameterizedTest
+    @ParameterizedTest @Disabled
     @MethodSource("createDatabaseParameters")
     public void createDatabaseTest(CatalogParameterSet catalogParameterSet){
         boolean isExceptionThrownOne;
@@ -251,7 +252,7 @@ public class CatalogAdminClientTest {
         System.out.println("Both the executions have been the same result");
     }
 
-    @ParameterizedTest
+    @ParameterizedTest @Disabled
     @MethodSource("existsDatabaseParameters")
     public void existsDatabaseTest(CatalogParameterSet catalogParameterSet){
         boolean isExceptionThrownOne,isExceptionThrownTwo;
@@ -317,7 +318,7 @@ public class CatalogAdminClientTest {
     }
 
     /* Those tests don't fail cause thrown UndefinedNameException not for error caused by the input */
-    @ParameterizedTest
+    @ParameterizedTest @Disabled
     @MethodSource("dropDatabaseParameters")
     public void dropDatabaseTest(CatalogParameterSet catalogParameterSet){
         boolean isExceptionThrownTwo;
