@@ -1,1 +1,0 @@
-select (-l_orderkey) as l_orderkey from lineitem order by l_orderkey;

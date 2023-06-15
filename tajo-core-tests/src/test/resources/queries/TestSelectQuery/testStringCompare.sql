@@ -1,1 +1,0 @@
-select l_orderkey from lineitem where l_shipdate <= '1996-03-22';

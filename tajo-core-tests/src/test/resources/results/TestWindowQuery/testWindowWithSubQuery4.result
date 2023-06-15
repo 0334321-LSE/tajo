@@ -1,8 +1,0 @@
-r_name,r_regionkey,mk
--------------------------------
-AFRICA,0,1
-AMERICA,1,1
-ASIA,2,1
-EUROPE,3,1
-MIDDLE EAST,4,1
-null,null,1

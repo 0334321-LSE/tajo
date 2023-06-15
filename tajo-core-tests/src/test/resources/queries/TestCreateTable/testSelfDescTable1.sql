@@ -1,1 +1,0 @@
-create table d9.schemaless (*) using json with ('compression.codec'='none') partition by column (id int8)

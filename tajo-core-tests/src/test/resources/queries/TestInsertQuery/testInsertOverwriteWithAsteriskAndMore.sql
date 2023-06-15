@@ -1,1 +1,0 @@
-select * from lineitem_year_month;

@@ -1,1 +1,0 @@
-select l_orderkey as orderkey, l_partkey from lineitem where orderkey = 1;

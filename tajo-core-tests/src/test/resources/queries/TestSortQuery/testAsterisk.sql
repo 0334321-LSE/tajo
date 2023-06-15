@@ -1,1 +1,0 @@
-select *, length(l_comment) as len_comment from lineitem order by len_comment;

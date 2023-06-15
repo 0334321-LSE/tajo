@@ -1,1 +1,0 @@
-select l_orderkey, l_suppkey from lineitem limit 3;

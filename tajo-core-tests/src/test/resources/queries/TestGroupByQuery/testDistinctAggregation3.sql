@@ -1,1 +1,0 @@
-select count(*), count(distinct l_orderkey), sum(distinct l_orderkey) from lineitem;

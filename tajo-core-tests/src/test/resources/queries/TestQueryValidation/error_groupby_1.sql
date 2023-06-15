@@ -1,1 +1,0 @@
-select * from lineitem group by l_orderkey;

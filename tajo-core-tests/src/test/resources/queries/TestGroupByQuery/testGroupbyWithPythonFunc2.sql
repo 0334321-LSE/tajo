@@ -1,1 +1,0 @@
-select n_regionkey, count(*) as cnt from nation group by n_regionkey having percent(cnt, 25) > 10

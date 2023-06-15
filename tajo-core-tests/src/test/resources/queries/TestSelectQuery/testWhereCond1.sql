@@ -1,1 +1,0 @@
-select l_orderkey + l_partkey as plus from lineitem where plus = 4;

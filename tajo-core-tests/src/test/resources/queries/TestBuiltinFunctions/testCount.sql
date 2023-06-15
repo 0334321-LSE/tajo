@@ -1,1 +1,0 @@
-select count(*) as rownum from lineitem;

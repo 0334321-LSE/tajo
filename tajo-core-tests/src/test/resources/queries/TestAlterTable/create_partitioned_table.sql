@@ -1,1 +1,0 @@
-create table partitioned_table (col1 int4, col2 int4) partition by column(col3 int4, col4 int4)

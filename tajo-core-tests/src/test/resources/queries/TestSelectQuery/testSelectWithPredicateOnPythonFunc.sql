@@ -1,1 +1,0 @@
-select * from nation where add_py(n_regionkey,1) > 2

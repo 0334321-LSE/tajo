@@ -1,1 +1,0 @@
-select * from lineitem limit 3;

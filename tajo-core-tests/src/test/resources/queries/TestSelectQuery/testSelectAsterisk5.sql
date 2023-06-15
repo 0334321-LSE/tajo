@@ -1,1 +1,0 @@
-select * from (select l_orderkey, 1 from lineitem where l_orderkey % 2 = 0) t1;

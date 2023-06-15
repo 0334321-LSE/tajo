@@ -1,1 +1,0 @@
-insert overwrite into location '/tajo-data/testInsertOverwriteLocationWithCompression' USING text WITH ('text.delimiter'='|','compression.codec'='org.apache.hadoop.io.compress.DeflateCodec') select * from default.lineitem where l_orderkey = 3;

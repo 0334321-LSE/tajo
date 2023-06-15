@@ -1,1 +1,0 @@
-select sum(cast(l_quantity * 25264513 as INT4)) from lineitem where l_quantity > 0

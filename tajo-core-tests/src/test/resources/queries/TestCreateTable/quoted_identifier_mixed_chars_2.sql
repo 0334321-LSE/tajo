@@ -1,1 +1,0 @@
-SELECT "tb1"."aGe" as "AgE", "tb1"."teXt" as "TEXT", "Number" as "NUMBER" FROM "TABLE1" "tb1";

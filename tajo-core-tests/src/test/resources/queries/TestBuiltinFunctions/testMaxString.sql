@@ -1,1 +1,0 @@
-select max(l_orderkey::text) as total_max from lineitem;

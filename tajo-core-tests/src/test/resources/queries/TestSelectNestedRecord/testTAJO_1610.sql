@@ -1,1 +1,0 @@
-select "text" from tweets.tweets limit 10;

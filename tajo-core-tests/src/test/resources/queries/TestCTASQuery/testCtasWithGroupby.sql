@@ -1,1 +1,0 @@
-select * from testCtasWithGroupby order by key;

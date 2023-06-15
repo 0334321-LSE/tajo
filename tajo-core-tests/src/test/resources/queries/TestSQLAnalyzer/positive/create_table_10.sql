@@ -1,1 +1,0 @@
-create external table table1 (name text, age int, earn bigint, score float) using text location '/tmp/data'

@@ -1,1 +1,0 @@
-select distinct * from testCtasWithoutTableDefinition where (key = 45.0 or key = 38.0);

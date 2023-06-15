@@ -1,1 +1,0 @@
-select l_orderkey from lineitem group by l_paerkey;

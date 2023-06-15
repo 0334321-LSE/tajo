@@ -1,1 +1,0 @@
-create table nation_diff (n_nationkey int8, n_name text, n_regionkey int8, n_comment text);

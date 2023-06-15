@@ -1,1 +1,0 @@
-select countpy() + max(l_orderkey) as merged from lineitem;

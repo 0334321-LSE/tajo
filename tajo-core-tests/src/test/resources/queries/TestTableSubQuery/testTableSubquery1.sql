@@ -1,1 +1,0 @@
-select l_orderkey from (select * from lineitem) as l;

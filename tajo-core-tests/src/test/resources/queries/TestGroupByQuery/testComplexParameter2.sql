@@ -1,1 +1,0 @@
-select count(*) + max(l_orderkey) as merged from lineitem;

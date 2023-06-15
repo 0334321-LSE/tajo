@@ -1,5 +1,0 @@
-{
-  "name": "ENABLE_SEQSCAN",
-  "value": "true",
-  "OpType": "SetSession"
-}

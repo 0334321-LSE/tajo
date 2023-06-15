@@ -1,2 +1,0 @@
-SET TIME ZONE 'GMT';
-SELECT * FROM timezoned2;

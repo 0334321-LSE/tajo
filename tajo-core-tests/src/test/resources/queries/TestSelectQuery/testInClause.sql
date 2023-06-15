@@ -1,1 +1,0 @@
-select l_orderkey from lineitem where l_partkey in (2,3);

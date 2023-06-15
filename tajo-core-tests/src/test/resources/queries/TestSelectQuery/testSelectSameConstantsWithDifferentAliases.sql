@@ -1,1 +1,0 @@
-select l_orderkey, '20130819' as date1, '20130819' as date2 from lineitem where l_orderkey > -1;

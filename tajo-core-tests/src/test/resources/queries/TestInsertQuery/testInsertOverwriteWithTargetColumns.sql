@@ -1,1 +1,0 @@
-insert overwrite into table1 (col1, col3) select l_orderkey, l_quantity from default.lineitem;

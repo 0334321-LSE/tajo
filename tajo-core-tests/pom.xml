@@ -62,9 +62,9 @@
             <param>org.apache.tajo.client.QueryClientImpl</param>
           </targetClasses>
           <targetTests>
-            <param>org.apache.tajo.client.catalogAdminClient.CatalogAdminClientTest</param>
-            <param>org.apache.tajo.client.queryClient.QueryClientTest</param>
-            <param>org.apache.tajo.client.queryClient.GetQueryStatusTest</param>
+            <param>org.apache.tajo.client.org.apache.tajo.client.CatalogAdminClientTest</param>
+            <param>org.apache.tajo.client.org.apache.tajo.client.QueryClientTest</param>
+            <param>org.apache.tajo.client.org.apache.tajo.client.GetQueryStatusTest</param>
             <param>org.apache.tajo.client.TajoClientIT</param>
           </targetTests>
         </configuration>
@@ -535,12 +535,12 @@
                 <param>org.apache.tajo.client.QueryClient</param>
               </targetClasses>
               <targetTests>
-                <param>org.apache.tajo.client.catalogAdminClient.CreateDatabaseTest</param>
-                <param>org.apache.tajo.client.catalogAdminClient.DropDatabaseTest</param>
-                <param>org.apache.tajo.client.catalogAdminClient.ExistsDatabaseTest</param>
-                <param>org.apache.tajo.client.queryClient.ExecuteQueryResultTest</param>
-                <param>org.apache.tajo.client.queryClient.GetQueryStatusTest</param>
-                <param>org.apache.tajo.client.queryClient.ExecuteQueryTest</param>
+                <param>org.apache.tajo.client.org.apache.tajo.client.CreateDatabaseTest</param>
+                <param>org.apache.tajo.client.org.apache.tajo.client.DropDatabaseTest</param>
+                <param>org.apache.tajo.client.org.apache.tajo.client.ExistsDatabaseTest</param>
+                <param>org.apache.tajo.client.org.apache.tajo.client.ExecuteQueryResultTest</param>
+                <param>org.apache.tajo.client.org.apache.tajo.client.GetQueryStatusTest</param>
+                <param>org.apache.tajo.client.org.apache.tajo.client.ExecuteQueryTest</param>
               </targetTests>
             </configuration>
             <executions>

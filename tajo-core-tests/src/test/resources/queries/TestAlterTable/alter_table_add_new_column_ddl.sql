@@ -1,1 +1,0 @@
-ALTER TABLE EFG ADD COLUMN cool text;

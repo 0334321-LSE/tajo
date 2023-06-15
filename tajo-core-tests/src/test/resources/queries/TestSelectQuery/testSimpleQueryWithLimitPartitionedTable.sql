@@ -1,1 +1,0 @@
-select * from customer_parts limit 10;

@@ -1,1 +1,0 @@
-select split_part(l_shipinstruct, 'KE', 1) from lineitem;

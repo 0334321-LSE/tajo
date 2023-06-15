@@ -1,1 +1,0 @@
-select l_linenumber, l_orderkey from lineitem order by l_orderkey desc, l_linenumber asc;

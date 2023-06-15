@@ -1,1 +1,0 @@
-create table full_table_parquet using parquet as select * from default.lineitem;

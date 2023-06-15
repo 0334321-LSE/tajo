@@ -1,1 +1,0 @@
-select sum(distinct l_orderkey), l_linenumber, count(distinct l_orderkey), count(*) from lineitem group by l_linenumber;
