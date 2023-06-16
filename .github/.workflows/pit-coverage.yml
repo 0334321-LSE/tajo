@@ -17,10 +17,10 @@ jobs:
           java-version: 8
           distribution: 'temurin'
       - name: launch-pit
-        run: mvn eu.stamp-project:pitmp-maven-plugin:run
+        run: mvn org.pitest:pitest-maven:mutationCoverage surefire:test -PpitProfile -D timeoutConstant=60000
       - name: Upload report
         uses: actions/upload-artifact@v3
         with:
           name: pit-report
-          path: tajo-core-tests/target/pit-reports/
+          path: tajo-cluster-tests/target/pit-reports/
           if-no-files-found: error

@@ -456,6 +456,7 @@
                 <param>org.apache.tajo2.client.QueryClientImpl</param>
               </targetClasses>
               <targetTests>
+                <param>org.apache.tajo2.client.ExecuteQueryPitTest</param>
                 <param>org.apache.tajo2.client.CreateDatabaseTest</param>
                 <param>org.apache.tajo2.client.DropDatabaseTest</param>
                 <param>org.apache.tajo2.client.ExistsDatabaseTest</param>
