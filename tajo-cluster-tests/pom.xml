@@ -57,6 +57,7 @@
           <excludes>
             <exclude>benchmark/**</exclude>
             <exclude>src/test/resources/tpch/**</exclude>
+            <exclude>derby.log</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -67,7 +68,7 @@
           <systemProperties>
             <tajo.test.enabled>true</tajo.test.enabled>
           </systemProperties>
-          <argLine>-Xms128m -Xmx1000m -Dfile.encoding=UTF-8 -Dderby.storage.pageSize=1024 -Dderby.stream.error.file=/dev/null</argLine>
+          <redirectTestOutputToFile>true</redirectTestOutputToFile>
         </configuration>
       </plugin>
       <plugin>
@@ -326,5 +327,157 @@
       </exclusions>
     </dependency>
   </dependencies>
+
+  <profiles>
+    <!-- jacocoProfile -->
+    <profile>
+      <id>jacocoProfile</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco-maven-plugin.version}</version>
+            <executions>
+              <execution>
+                <id>prepare-agent</id>
+                <goals>
+                  <goal>prepare-agent</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>report</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>report</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <!-- ba-dua profile-->
+    <profile>
+      <id>baduaProfile</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <!-- Use a stable version instead of SNAPSHOT one -->
+        <ba-dua.version>0.6.0</ba-dua.version>
+        <argLine>-javaagent:target/dependency/ba-dua-agent-rt-${ba-dua.version}-all.jar
+          -Doutput.file=target/badua.ser
+        </argLine>
+      </properties>
+      <!-- Needed to generate the report-->
+      <dependencies>
+        <dependency>
+          <groupId>br.usp.each.saeg</groupId>
+          <artifactId>ba-dua-cli</artifactId>
+          <version>${ba-dua.version}</version>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+         <!-- Copy ba-dua-agent-rt from .m2 directory to target/dependency -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>2.10</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>copy</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>br.usp.each.saeg</groupId>
+                      <artifactId>ba-dua-agent-rt</artifactId>
+                      <classifier>all</classifier>
+                      <version>${ba-dua.version}</version>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+        <!-- Generate report in xml format -->
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.5.0</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>java</goal>
+                </goals>
+                <phase>verify</phase>
+                <configuration>
+                  <mainClass>br.usp.each.saeg.badua.cli.Report</mainClass>
+                  <arguments>
+                    <argument>-input</argument>
+                    <argument>${project.build.directory}/badua.ser</argument>
+                    <argument>-classes</argument>
+                    <argument>${project.build.outputDirectory}</argument>
+                    <argument>-show-classes</argument>
+                    <argument>-show-methods</argument>
+                    <argument>-xml</argument>
+                    <argument>${project.build.directory}/badua.xml</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <!-- pitProfile -->
+    <profile>
+      <id>pitProfile</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.pitest</groupId>
+            <artifactId>pitest-maven</artifactId>
+            <version>${pitest-maven-plugin.version}</version>
+            <configuration>
+
+              <targetClasses>
+                <param>org.apache.tajo2.client.CatalogAdminClientImpl</param>
+                <param>org.apache.tajo2.client.QueryClientImpl</param>
+              </targetClasses>
+              <targetTests>
+                <param>org.apache.tajo2.client.CreateDatabaseTest</param>
+                <param>org.apache.tajo2.client.DropDatabaseTest</param>
+                <param>org.apache.tajo2.client.ExistsDatabaseTest</param>
+                <param>org.apache.tajo2.client.ExecuteQueryResultTest</param>
+                <param>org.apache.tajo2.client.GetQueryStatusTest</param>
+                <param>org.apache.tajo2.client.ExecuteQueryTest</param>
+              </targetTests>
+            </configuration>
+            <executions>
+              <execution>
+                <phase>verify</phase>
+                <goals>
+                  <goal>mutationCoverage</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+
+  </profiles>
 
 </project>

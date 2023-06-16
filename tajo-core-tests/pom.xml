@@ -58,14 +58,14 @@
         </dependencies>
         <configuration>
           <targetClasses>
-            <param>org.apache.tajo.client.CatalogAdminClientImpl</param>
-            <param>org.apache.tajo.client.QueryClientImpl</param>
+            <param>org.apache.tajo2.client.CatalogAdminClientImpl</param>
+            <param>org.apache.tajo2.client.QueryClientImpl</param>
           </targetClasses>
           <targetTests>
             <param>org.apache.tajo.client.org.apache.tajo.client.CatalogAdminClientTest</param>
             <param>org.apache.tajo.client.org.apache.tajo.client.QueryClientTest</param>
-            <param>org.apache.tajo.client.org.apache.tajo.client.GetQueryStatusTest</param>
-            <param>org.apache.tajo.client.TajoClientIT</param>
+            <param>org.apache.tajo.client.org.apache.tajo2.client.GetQueryStatusTest</param>
+            <param>org.apache.tajo2.client.TajoClientIT</param>
           </targetTests>
         </configuration>
       </plugin>
@@ -531,16 +531,16 @@
             <configuration>
 
               <targetClasses>
-                <param>org.apache.tajo.client.CatalogAdminClientImpl</param>
-                <param>org.apache.tajo.client.QueryClient</param>
+                <param>org.apache.tajo2.client.CatalogAdminClientImpl</param>
+                <param>org.apache.tajo2.client.QueryClient</param>
               </targetClasses>
               <targetTests>
-                <param>org.apache.tajo.client.org.apache.tajo.client.CreateDatabaseTest</param>
-                <param>org.apache.tajo.client.org.apache.tajo.client.DropDatabaseTest</param>
-                <param>org.apache.tajo.client.org.apache.tajo.client.ExistsDatabaseTest</param>
-                <param>org.apache.tajo.client.org.apache.tajo.client.ExecuteQueryResultTest</param>
-                <param>org.apache.tajo.client.org.apache.tajo.client.GetQueryStatusTest</param>
-                <param>org.apache.tajo.client.org.apache.tajo.client.ExecuteQueryTest</param>
+                <param>org.apache.tajo.client.org.apache.tajo2.client.CreateDatabaseTest</param>
+                <param>org.apache.tajo.client.org.apache.tajo2.client.DropDatabaseTest</param>
+                <param>org.apache.tajo.client.org.apache.tajo2.client.ExistsDatabaseTest</param>
+                <param>org.apache.tajo.client.org.apache.tajo2.client.ExecuteQueryResultTest</param>
+                <param>org.apache.tajo.client.org.apache.tajo2.client.GetQueryStatusTest</param>
+                <param>org.apache.tajo.client.org.apache.tajo2.client.ExecuteQueryTest</param>
               </targetTests>
             </configuration>
             <executions>
