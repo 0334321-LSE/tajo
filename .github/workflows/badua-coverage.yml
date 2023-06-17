@@ -14,7 +14,7 @@ jobs:
       - name: Set up JDK 1.8
         uses: actions/setup-java@v3
         with:
-          java-version: 8.0.372
+          java-version: 8
           distribution: 'temurin'
       - name: Clone and build ba-dua  # to get the CLI
         run: |
@@ -24,9 +24,16 @@ jobs:
           mvn clean install
       - name: Build
         run: mvn clean verify -P baduaProfile -Dsurefire.rerunFailingTestsCount=2
+
+      - name: Convert ser to xml
+        run: |
+          cd tajo-cluster-tests/target
+          cp dependency/ba-dua-cli-0.6.0-all.jar .
+          java -jar ba-dua-cli-0.6.0-all.jar report -input badua.ser -classes classes -show-classes -show-methods -xml badua.xml
+
       - name: Upload report
         uses: actions/upload-artifact@v3
         with:
           name: ba-dua-report
-          path: tajo-cluster-test/target/badua.xml
+          path: tajo-cluster-tests/target/badua.xml
           if-no-files-found: error

@@ -16,6 +16,10 @@ jobs:
         with:
           java-version: 8
           distribution: 'temurin'
+
+      - name: build
+        run: mvn install -Dsurefire.rerunFailingTestsCount=2
+
       - name: launch-pit
         run: mvn org.pitest:pitest-maven:mutationCoverage surefire:test -PpitProfile -D timeoutConstant=60000 -Dsurefire.rerunFailingTestsCount=2
       - name: Upload report

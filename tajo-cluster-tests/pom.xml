@@ -394,10 +394,17 @@
                   <goal>copy</goal>
                 </goals>
                 <configuration>
+                  <outputDirectory>${project.build.directory}/dependency</outputDirectory>
                   <artifactItems>
                     <artifactItem>
                       <groupId>br.usp.each.saeg</groupId>
                       <artifactId>ba-dua-agent-rt</artifactId>
+                      <classifier>all</classifier>
+                      <version>${ba-dua.version}</version>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>br.usp.each.saeg</groupId>
+                      <artifactId>ba-dua-cli</artifactId>
                       <classifier>all</classifier>
                       <version>${ba-dua.version}</version>
                     </artifactItem>
@@ -408,7 +415,7 @@
           </plugin>
 
         <!-- Generate report in xml format -->
-          <plugin>
+         <!-- <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
             <version>1.5.0</version>
@@ -433,7 +440,7 @@
                 </configuration>
               </execution>
             </executions>
-          </plugin>
+          </plugin>-->
         </plugins>
       </build>
     </profile>
