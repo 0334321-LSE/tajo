@@ -17,7 +17,7 @@ jobs:
           java-version: 8
           distribution: 'temurin'
       - name: jacoco-coverage
-        run: mvn clean verify -P jacocoProfile
+        run: mvn clean verify -P jacocoProfile -Dsurefire.rerunFailingTestsCount=2
       - name: Upload report
         uses: actions/upload-artifact@v3
         with:

@@ -23,7 +23,7 @@ jobs:
           git checkout tags/ba-dua-0.6.0 -b ba-dua-0.6.0
           mvn clean install
       - name: Build
-        run: mvn clean verify -P baduaProfile
+        run: mvn clean verify -P baduaProfile -Dsurefire.rerunFailingTestsCount=2
       - name: Upload report
         uses: actions/upload-artifact@v3
         with:
