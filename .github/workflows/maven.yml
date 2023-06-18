@@ -34,4 +34,16 @@ jobs:
           cache: maven
       - name: Build with Maven
         run: mvn clean install -Dsurefire.rerunFailingTestsCount=2
+      - name: Upload surefire report
+        uses: actions/upload-artifact@v3
+        with:
+          name: pit-report
+          path: tajo-cluster-tests/target/surefire-reports/
+          if-no-files-found: error
+      - name: Upload failsafe report
+        uses: actions/upload-artifact@v3
+        with:
+          name: pit-report
+          path: tajo-cluster-tests/target/failsafe-reports/
+          if-no-files-found: error
 
